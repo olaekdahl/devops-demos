@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata: { name: devops-app-config }
+data:
+  # Simple key/values — used as env vars
+  APP_NAME: "DevOps Demo App"
+  ENVIRONMENT: "staging"
+  # Larger config can be a multi-line block — used as a file
+  motd.txt: |
+    Welcome to DevOps Fundamentals.
+    Build #${CI_BUILD_NUMBER} (placeholder).

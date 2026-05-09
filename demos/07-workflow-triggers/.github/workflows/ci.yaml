@@ -1,0 +1,14 @@
+name: CI on push
+on:
+  push:
+    branches: [main, 'release/*']
+    paths:
+      - 'app.py'              # only run if app code changed
+      - 'requirements.txt'
+      - '.github/workflows/ci.yaml'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "Build for $GITHUB_REF after push by $GITHUB_ACTOR"

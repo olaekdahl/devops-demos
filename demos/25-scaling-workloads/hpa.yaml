@@ -1,0 +1,23 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata: { name: devops-app-hpa }
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: devops-app
+  minReplicas: 1
+  maxReplicas: 8
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 50          # scale up when avg CPU > 50% of request
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 0       # react immediately
+      policies: [{ type: Percent, value: 100, periodSeconds: 15 }]
+    scaleDown:
+      stabilizationWindowSeconds: 60      # wait 1 min before scaling back

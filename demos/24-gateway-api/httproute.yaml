@@ -1,0 +1,22 @@
+# App-team owned: defines what to route where.
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: devops-routes
+  namespace: default
+spec:
+  parentRefs:
+    - name: public-http
+  hostnames:
+    - devops.local
+  rules:
+    - matches:
+        - path: { type: PathPrefix, value: /api }
+      backendRefs:
+        - name: devops-app-svc
+          port: 80
+    - matches:
+        - path: { type: PathPrefix, value: /web }
+      backendRefs:
+        - name: web-svc
+          port: 80

@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: devops-app }
+spec:
+  replicas: 2
+  selector: { matchLabels: { app: devops-app } }
+  template:
+    metadata: { labels: { app: devops-app } }
+    spec:
+      imagePullSecrets:
+        - name: jfrog-pull-secret           # see Demo 30
+      containers:
+        - name: app
+          image: <artifactory-url>/<repo>/<initials>-devops:1.0.0
+          ports: [{ containerPort: 8000 }]
+          readinessProbe:
+            httpGet: { path: /health, port: 8000 }

@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: devops-app }
+spec:
+  replicas: 2
+  selector: { matchLabels: { app: devops-app } }
+  template:
+    metadata:
+      labels: { app: devops-app }
+      annotations:
+        # Trick to force a rollout when ConfigMap changes:
+        # update this hash whenever you change the ConfigMap (or use kustomize).
+        config-hash: "v1"
+    spec:
+      containers:
+        - name: app
+          image: devops-app:1.0.0
+          imagePullPolicy: IfNotPresent
+          ports: [{ containerPort: 8000 }]
+          envFrom:
+            - configMapRef: { name: devops-app-config }   # all CM keys → env
+          volumeMounts:
+            - name: motd
+              mountPath: /etc/motd                         # mount one file
+              subPath: motd.txt
+          readinessProbe:
+            httpGet: { path: /health, port: 8000 }
+      volumes:
+        - name: motd
+          configMap:
+            name: devops-app-config
+            items:
+              - key: motd.txt
+                path: motd.txt

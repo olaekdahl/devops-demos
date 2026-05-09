@@ -1,0 +1,36 @@
+# A 'workflow' is one YAML file inside .github/workflows/
+name: Hello Actions                       # appears in the Actions tab UI
+
+# 'on' = triggers. Run on every push to any branch + manual button.
+on:
+  push:
+  workflow_dispatch:                       # adds a 'Run workflow' button
+
+# 'jobs' run in parallel by default. We define one job here.
+jobs:
+  greet:                                   # job id (any slug)
+    name: Greet the runner                 # display name
+    runs-on: ubuntu-latest                 # hosted runner OS
+
+    steps:                                 # ordered list, run sequentially
+      # 1. Use a marketplace 'action' to clone the repo into the runner
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2. Inline shell command
+      - name: Print runner info
+        run: |
+          echo "Repo:   ${{ github.repository }}"
+          echo "SHA:    ${{ github.sha }}"
+          echo "Actor:  ${{ github.actor }}"
+          echo "Event:  ${{ github.event_name }}"
+          uname -a
+
+      # 3. Multi-line script using a different shell
+      - name: Use Python action
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Show Python version
+        run: python --version

@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: devops-app }
+spec:
+  replicas: 2
+  selector: { matchLabels: { app: devops-app } }
+  template:
+    metadata: { labels: { app: devops-app } }
+    spec:
+      imagePullSecrets:
+        - name: jfrog-pull-secret
+      containers:
+        - name: app
+          image: __IMAGE__              # replaced at deploy time with full ref
+          imagePullPolicy: Always
+          ports: [{ containerPort: 8000 }]
+          readinessProbe:
+            httpGet: { path: /health, port: 8000 }
+          livenessProbe:
+            httpGet: { path: /health, port: 8000 }
+            initialDelaySeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: devops-app-lb
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: external
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+    service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+spec:
+  type: LoadBalancer
+  selector: { app: devops-app }
+  ports: [{ port: 80, targetPort: 8000 }]

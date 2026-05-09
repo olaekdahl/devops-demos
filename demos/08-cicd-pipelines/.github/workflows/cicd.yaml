@@ -1,0 +1,77 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Reduce GITHUB_TOKEN permissions to least privilege
+permissions:
+  contents: read
+
+# Cancel previous runs of the same branch
+concurrency:
+  group: cicd-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  # ── Stage 1: Lint ──────────────────────────────────────────────────────
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12', cache: 'pip' }
+      - run: pip install flake8
+      - run: flake8 app.py --max-line-length=120
+
+  # ── Stage 2: Unit tests ────────────────────────────────────────────────
+  test:
+    runs-on: ubuntu-latest
+    needs: lint                    # only runs if lint passed
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12', cache: 'pip' }
+      - run: pip install -r requirements.txt pytest httpx
+      - run: PYTHONPATH=$(pwd) pytest -v tests/
+
+  # ── Stage 3: Build wheel ───────────────────────────────────────────────
+  build:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install build && python -m build --wheel
+      - name: Upload wheel artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-wheel
+          path: dist/*.whl
+          retention-days: 7
+
+  # ── Stage 4: Deploy (mock) ─────────────────────────────────────────────
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'    # never deploy from PRs
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { name: app-wheel, path: dist }
+      - run: |
+          ls -lh dist/
+          echo "Pretending to upload $(ls dist/) to S3 / Beanstalk / EKS..."
+          # In a real pipeline this is `aws s3 cp` / `eb deploy` / `kubectl apply`.
+
+  # ── Stage 5: Smoke test (mock) ─────────────────────────────────────────
+  smoke:
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+      - run: |
+          echo "curl https://devops-demo.example.com/health"
+          echo '{"status":"OK"}'           # pretend response
+          echo "::notice::smoke test passed"

@@ -1,0 +1,21 @@
+name: Manual deploy
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'dev'
+        type: choice
+        options: [dev, staging, prod]
+      version:
+        description: 'Image tag to deploy'
+        required: true
+        default: 'latest'
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "Deploying version=${{ github.event.inputs.version }}"
+          echo "to environment=${{ github.event.inputs.environment }}"
