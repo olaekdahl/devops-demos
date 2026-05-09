@@ -55,7 +55,7 @@ git switch -c docs/add-readme
 cat > README.md <<'EOF'
 # devops-<initials>
 
-Welcome! This repository is used in the WA3647 DevOps Fundamentals course.
+Welcome! This repository is used in the DevOps Fundamentals course.
 
 ## Expected Output
 

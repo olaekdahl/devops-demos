@@ -1,4 +1,4 @@
-# DevOps Fundamentals — Demo Index (WA3647-03)
+# DevOps Fundamentals — Demo Index
 
 Each folder under `demos/` is a self-contained demo. Open the folder's `DEMO.md`, follow the **How to Run** section at the top, then read the explanation that follows.
 

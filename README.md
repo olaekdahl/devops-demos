@@ -1,45 +1,35 @@
-# BCG DevOps — WA3647-03 Instructor Demos
+# DevOps Fundamentals — Instructor Demos
 
-Hands-on demos for the **WA3647-03 DevOps Fundamentals** course (3-day
-instructor-led). 38 demos covering DevOps culture → Git/GitHub → GitHub Actions
-CI/CD → Docker → Kubernetes → JFrog Artifactory → AWS EKS → observability,
-troubleshooting, and anti-patterns.
+Hands-on demos for a 3-day instructor-led DevOps Fundamentals course. 39 demos covering DevOps culture → Git/GitHub → GitHub Actions CI/CD → Docker → Kubernetes → JFrog Artifactory → AWS EKS → observability, troubleshooting, anti-patterns, and software supply chain security.
 
 ## Layout
 
 ```
 demos/
-  00-OVERVIEW.md         # Index + conventions
+  README.md              # Index of all demos
   sample-app/            # Shared FastAPI app reused across demos
-  NN-topic/              # One folder per demo (38 of them)
-    DEMO.md              #   instructor narrative
-    README.md            #   how-to-run cheat-sheet
-    commands.sh          #   all shell commands, executable
+  NN-topic/              # One self-contained folder per demo (39 of them)
+    DEMO.md              #   leads with "How to Run", then explanation
     <code files>         #   workflows / manifests / Dockerfiles / app code
 tools/
-  extract_demos.py       # Regenerates demo folders from the NN-*.md sources
+  check_diagrams.py      # Validates ASCII box diagrams in DEMO.md files
 .gitignore
 ```
 
 ## Quick start
 
-```bash
-# Run the shared sample app
-cd demos/sample-app
-make install && make run     # http://localhost:8000
+Each demo folder is self-contained. To run a demo, `cd` into it and follow the **How to Run** section at the top of its `DEMO.md`. Example:
 
-# Run any demo
+```bash
 cd demos/18-docker-compose
 docker compose up -d --build
 ```
 
-## Regenerate demo folders
-
-The folders under `demos/NN-topic/` are produced by `tools/extract_demos.py`
-from the `demos/NN-topic.md` source files. After editing a `.md`:
+To run the shared sample app on its own:
 
 ```bash
-python3 tools/extract_demos.py
+cd demos/sample-app
+make install && make run     # http://localhost:8000
 ```
 
 ## Prerequisites by demo group
@@ -47,10 +37,11 @@ python3 tools/extract_demos.py
 | Demos | Tools |
 |---|---|
 | 01–05 | git, gh CLI |
-| 06–13 | git, GitHub repo, optionally `act`/`actionlint` |
+| 06–13 | git, GitHub repo, optionally `act` / `actionlint` |
 | 14–18 | Docker / Docker Compose |
 | 19–28 | Docker, `kind`, `kubectl` |
 | 29–32 | Docker, `kubectl`, `eksctl`, AWS CLI v2, JFrog account |
 | 33–38 | All of the above + `helm` |
+| 39    | `cosign`, `syft`, GitHub repo with Actions enabled |
 
-See [demos/00-OVERVIEW.md](demos/00-OVERVIEW.md) for the full demo index.
+See [demos/README.md](demos/README.md) for the full demo index.

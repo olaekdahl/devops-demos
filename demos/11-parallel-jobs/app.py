@@ -1,4 +1,4 @@
-# Sample FastAPI app used across most demos. Mirrors the WA3647 lab app.
+# Sample FastAPI app used across most demos.
 # Kept intentionally small: one file, no framework abstractions, easy to teach.
 import os
 import random
