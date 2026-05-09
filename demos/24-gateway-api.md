@@ -11,6 +11,34 @@
 - Cross-namespace routing via `ReferenceGrant`.
 - Typed routes: `HTTPRoute`, `TLSRoute`, `GRPCRoute`, `TCPRoute`, `UDPRoute`.
 
+## Quick Start
+Run the demo end-to-end:
+
+```bash
+cd demos/24-gateway-api
+bash install.sh
+
+kubectl apply -f gateway.yaml
+kubectl apply -f httproute.yaml
+
+kubectl get gatewayclass
+kubectl get gateway
+kubectl get httproute
+
+# Find the gateway's externally reachable address (in Kind it's a Service of type LoadBalancer with external <pending>; use NodePort or port-forward for the demo)
+kubectl -n envoy-gateway-system get svc
+
+# Port-forward for the demo
+kubectl -n envoy-gateway-system port-forward svc/envoy-default-public-http-* 8081:80 &
+
+curl -H 'Host: devops.local' http://127.0.0.1:8081/api/health
+curl -H 'Host: devops.local' http://127.0.0.1:8081/web/
+
+# Cleanup
+kubectl delete -f httproute.yaml -f gateway.yaml
+helm uninstall eg -n envoy-gateway-system
+```
+
 ## Real-World Relevance
 Gateway API is the Kubernetes-project-blessed replacement for Ingress. Modern
 controllers (Envoy Gateway, Istio, Cilium, NGINX Gateway Fabric, AWS LB

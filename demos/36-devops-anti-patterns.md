@@ -16,6 +16,14 @@
 - Zero rollback plan
 - Tribal knowledge / no runbooks
 
+## Quick Start
+This is a **discussion / whiteboard** demo — no code to run. Walk through `anti-patterns.md` (see [Complete Code](#complete-code)) and have students score their own org's pipeline against each anti-pattern. Optionally:
+
+```bash
+cd demos/36-devops-anti-patterns
+cat anti-patterns.md
+```
+
 ## Real-World Relevance
 Most outages and security incidents trace back to one of these anti-patterns.
 Pattern recognition is half the fight.

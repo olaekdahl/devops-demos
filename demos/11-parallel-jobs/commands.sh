@@ -9,3 +9,11 @@ cp app.py requirements.txt
 cp tests/test_app.py tests/
 # add parallel.yaml above
 # git add . && git commit -m "ci: parallel jobs" && git push  # parent-repo op — review & run manually
+
+# --- next block ---
+
+mkdir -p tests .github/workflows
+cp app.py requirements.txt 
+cp tests/test_app.py tests/
+# add parallel.yaml above
+# git add . && git commit -m "ci: parallel jobs" && git push  # parent-repo op — review & run manually

@@ -4,6 +4,10 @@
 # Run blocks individually rather than the whole script if unsure.
 set -euo pipefail
 
+# git add .github/ISSUE_TEMPLATE/ && git commit -m "chore: issue templates" && git push  # parent-repo op — review & run manually
+
+# --- next block ---
+
 git switch -c docs/usage-instructions
 
 cat >> README.md <<'EOF'

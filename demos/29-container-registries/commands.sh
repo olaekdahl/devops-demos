@@ -16,6 +16,18 @@ docker login                                      # username + token (NOT passwo
 
 # --- next block ---
 
+docker build -t devops-app:1.0.0 .
+
+docker login                                      # username + token (NOT password)
+
+# docker tag  devops-app:1.0.0  <user>/devops-app:1.0.0  # contains <placeholder> — edit before running
+# docker tag  devops-app:1.0.0  <user>/devops-app:latest  # contains <placeholder> — edit before running
+
+# docker push <user>/devops-app:1.0.0  # contains <placeholder> — edit before running
+# docker push <user>/devops-app:latest  # contains <placeholder> — edit before running
+
+# --- next block ---
+
 # echo "$GITHUB_PAT" | docker login ghcr.io -u <github-user> --password-stdin  # contains <placeholder> — edit before running
 # docker tag  devops-app:1.0.0  ghcr.io/<github-user>/devops-app:1.0.0  # contains <placeholder> — edit before running
 # docker push ghcr.io/<github-user>/devops-app:1.0.0  # contains <placeholder> — edit before running

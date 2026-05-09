@@ -28,3 +28,30 @@ docker compose down
 
 # Tear down + remove volume (wipe data)
 docker compose down -v
+
+# --- next block ---
+
+cd .
+# (create the files above)
+
+# Build & start everything
+docker compose up -d --build
+
+# Inspect
+docker compose ps
+docker compose logs -f app
+
+# Hit the API
+curl localhost:8000/health
+curl localhost:8000/visit
+curl localhost:8000/visit
+curl localhost:8000/visit
+
+# Restart only the app (not db/cache)
+docker compose restart app
+
+# Tear down (keep volume)
+docker compose down
+
+# Tear down + remove volume (wipe data)
+docker compose down -v

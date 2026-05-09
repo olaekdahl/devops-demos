@@ -11,19 +11,50 @@
 - `depends_on`, healthchecks
 - `.env` files and variable substitution
 
+## Quick Start
+Run the demo end-to-end:
+
+```bash
+cd demos/18-docker-compose
+mkdir -p demos/18-docker-compose && cd demos/18-docker-compose
+# (create the files above)
+
+# Build & start everything
+docker compose up -d --build
+
+# Inspect
+docker compose ps
+docker compose logs -f app
+
+# Hit the API
+curl localhost:8000/health
+curl localhost:8000/visit
+curl localhost:8000/visit
+curl localhost:8000/visit
+
+# Restart only the app (not db/cache)
+docker compose restart app
+
+# Tear down (keep volume)
+docker compose down
+
+# Tear down + remove volume (wipe data)
+docker compose down -v
+```
+
 ## Real-World Relevance
 For local dev, Compose is the de facto standard: spin up your app + DB + cache
 + message queue with one command. In CI it's used for integration test rigs.
 
 ## Demo Architecture
 ```
-  ┌─── compose.yaml ───┐
-  │                    │
-  │  app  ──► db (postgres)
-  │       └─► cache (redis)
-  │                    │
-  │  port 8000:8000    │   ◄── only "app" published to host
-  └────────────────────┘
+  ┌────── compose.yaml ──────┐
+  │                          │
+  │  app  ──► db (postgres)  │
+  │       └─► cache (redis)  │
+  │                          │
+  │  port 8000:8000          │   ◄── only "app" published to host
+  └──────────────────────────┘
 ```
 
 ## Instructor Notes

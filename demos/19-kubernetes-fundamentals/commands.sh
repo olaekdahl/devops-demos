@@ -20,3 +20,22 @@ kubectl get pods -l app=web -w              # a new pod appears within seconds
 
 # Cleanup
 kubectl delete deployment web
+
+# --- next block ---
+
+# What's running?
+kubectl get nodes
+kubectl get pods -A                         # all namespaces — see control plane
+
+# Where the API server lives
+kubectl config view --minify
+
+# A controller in action: create a deployment, kill a pod, watch it return.
+kubectl create deployment web --image=nginx:alpine --replicas=3
+kubectl get pods -l app=web
+POD=$(kubectl get pod -l app=web -o jsonpath='{.items[0].metadata.name}')
+kubectl delete pod $POD
+kubectl get pods -l app=web -w              # a new pod appears within seconds
+
+# Cleanup
+kubectl delete deployment web

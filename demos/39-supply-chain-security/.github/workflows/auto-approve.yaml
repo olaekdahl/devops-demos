@@ -1,0 +1,17 @@
+# Auto-approves Renovate PRs ONLY if both the author AND the triggering actor
+# are the bot. Stops a human pretending to be the bot to bypass review.
+name: Auto-approve trusted bot PRs
+on: [pull_request_target]
+
+permissions: {}
+
+jobs:
+  approve:
+    runs-on: ubuntu-24.04
+    if: >-
+      github.event.pull_request.user.login == 'renovate[bot]' &&
+      github.triggering_actor == 'renovate[bot]'
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: hmarr/auto-approve-action@b40d6c9ed2fa10c9a2749eca7eb004418a705501  # v4.0.0

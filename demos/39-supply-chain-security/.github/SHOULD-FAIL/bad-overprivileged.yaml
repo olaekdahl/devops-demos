@@ -1,0 +1,10 @@
+# !!! INTENTIONALLY VULNERABLE — write-all token. !!!
+name: BAD - over-privileged token
+on: [pull_request]
+permissions: write-all            # ❌ all scopes; one compromised step owns the repo
+jobs:
+  vuln:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - run: echo "this token can push tags, edit workflows, etc."

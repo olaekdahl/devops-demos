@@ -10,6 +10,18 @@
 - `fail-fast`, `max-parallel`
 - `include:` / `exclude:` to surgically tune the grid
 
+## Quick Start
+Run the demo end-to-end:
+
+```bash
+cd demos/10-matrix-builds
+mkdir -p demos/10-matrix-builds/tests demos/10-matrix-builds/.github/workflows
+cp demos/sample-app/app.py demos/sample-app/requirements.txt demos/10-matrix-builds/
+cp demos/sample-app/tests/test_app.py demos/10-matrix-builds/tests/
+# Add matrix.yaml above
+git add . && git commit -m "ci: matrix build" && git push
+```
+
 ## Real-World Relevance
 Libraries (anyone publishing to PyPI) test on every supported Python and OS.
 Apps test on prod-like + N-1 versions to catch upgrade regressions.

@@ -12,6 +12,15 @@
 - The DevOps "infinity" lifecycle: Plan → Code → Build → Test → Release → Deploy → Operate → Monitor → (back to Plan)
 - Automation, repeatability, fast feedback, shared ownership
 
+## Quick Start
+Run the demo end-to-end:
+
+```bash
+cd demos/01-devops-fundamentals
+chmod +x loop.sh
+./loop.sh
+```
+
 ## Real-World Relevance
 Every modern engineering org — banks, retailers, SaaS companies — uses DevOps
 practices to ship safely and quickly. Companies like Netflix, Amazon, Etsy
@@ -25,10 +34,11 @@ A whiteboard / slide-driven demo plus a tiny end-to-end loop on the lab VM:
    ┌─────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐
    │  Code   ├───►│ git push ├───►│ CI build ├───►│  Deploy  │
    └─────────┘    └──────────┘    └──────────┘    └────┬─────┘
+                                                       │
                                                        ▼
-   ┌──────────────────────── Monitor & Feedback ───────┐
-   │  HTTP probe / log line tells us it's live         │
-   └───────────────────────────────────────────────────┘
+   ┌──────────────── Monitor & Feedback ──────────────────┐
+   │  HTTP probe / log line tells us it's live ───────────┼──► back to Code
+   └──────────────────────────────────────────────────────┘
 ```
 
 ## Instructor Notes

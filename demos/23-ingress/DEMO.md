@@ -11,6 +11,46 @@
 - `host:` and `path:` rules.
 - TLS termination at the ingress.
 
+## Quick Start
+Run the demo end-to-end:
+
+```bash
+cd demos/23-ingress
+
+# 1. Install ingress-nginx
+bash install-ingress-nginx.sh
+
+# 2. Add the host alias on your machine
+echo "127.0.0.1 devops.local" | sudo tee -a /etc/hosts
+
+# 3. Make sure the ClusterIP Service from Demo 22 exists
+kubectl get svc devops-app-svc
+
+# 4. Deploy the second app
+kubectl apply -f app2-deployment.yaml
+
+# 5. Apply the Ingress
+kubectl apply -f ingress.yaml
+kubectl get ingress
+
+# 6. Hit it (Kind exposes ingress on host :8080 thanks to extraPortMappings)
+curl http://devops.local:8080/api/health
+curl http://devops.local:8080/web/
+
+# 7. TLS (self-signed)
+mkdir -p tls
+openssl req -x509 -nodes -newkey rsa:2048 \
+  -keyout tls/tls.key -out tls/tls.crt \
+  -subj "/CN=devops.local" -days 30
+kubectl create secret tls devops-tls \
+  --cert=tls/tls.crt --key=tls/tls.key
+kubectl apply -f ingress-tls.yaml
+curl -k https://devops.local:8443/health         # Kind also forwards 443→8443
+
+# 8. Cleanup
+kubectl delete -f ingress.yaml -f app2-deployment.yaml
+```
+
 ## Real-World Relevance
 Almost every cloud-native HTTP app sits behind an Ingress. One LoadBalancer →
 one ingress controller → many services, organized by hostname/path.

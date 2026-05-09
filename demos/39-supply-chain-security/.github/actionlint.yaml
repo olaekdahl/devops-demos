@@ -1,0 +1,9 @@
+# Project conventions actionlint will enforce.
+self-hosted-runner:
+  labels: []
+config-variables: []
+paths:
+  ".github/workflows/**":
+    ignore:
+      # We expect SHOULD-FAIL/* to be linted by their own dedicated job.
+      - "SHOULD-FAIL/**"

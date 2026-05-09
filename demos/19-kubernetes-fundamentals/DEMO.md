@@ -14,6 +14,29 @@
 - Core objects: Pod, ReplicaSet, Deployment, Service, Namespace.
 - Declarative reconciliation loop.
 
+## Quick Start
+Run the demo end-to-end:
+
+```bash
+cd demos/19-kubernetes-fundamentals
+# What's running?
+kubectl get nodes
+kubectl get pods -A                         # all namespaces — see control plane
+
+# Where the API server lives
+kubectl config view --minify
+
+# A controller in action: create a deployment, kill a pod, watch it return.
+kubectl create deployment web --image=nginx:alpine --replicas=3
+kubectl get pods -l app=web
+POD=$(kubectl get pod -l app=web -o jsonpath='{.items[0].metadata.name}')
+kubectl delete pod $POD
+kubectl get pods -l app=web -w              # a new pod appears within seconds
+
+# Cleanup
+kubectl delete deployment web
+```
+
 ## Real-World Relevance
 Kubernetes is the de facto standard for containerized workloads in production.
 Even managed services (EKS, GKE, AKS) are just hosted Kubernetes. Understanding
@@ -29,9 +52,9 @@ the architecture clarifies *why* your kubectl commands behave the way they do.
             │                  └────── Controller Manager (reconciles)    │
             └──────────────────┬──────────────────────────────────────────┘
                                │ watches
-            ┌──────────────────┴────────────── Worker Node ────────────────┐
-            │   kubelet  ◄── runs Pods ◄── containerd                     │
-            │   kube-proxy (networking, iptables/ipvs)                    │
+            ┌──────────────────┴───────────── Worker Node ─────────────────┐
+            │   kubelet  ◄── runs Pods ◄── containerd                      │
+            │   kube-proxy (networking, iptables/ipvs)                     │
             └──────────────────────────────────────────────────────────────┘
 ```
 

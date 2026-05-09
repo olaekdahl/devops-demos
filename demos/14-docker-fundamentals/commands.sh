@@ -10,6 +10,12 @@ sudo unshare --pid --uts --fork --mount-proc /bin/bash
 
 # --- next block ---
 
+# Create a process in its own PID + UTS namespace.
+sudo unshare --pid --uts --fork --mount-proc /bin/bash
+# Inside that bash:
+
+# --- next block ---
+
 docker run --rm -it --name nginx-demo -p 8080:80 nginx:alpine
 
 # --- next block ---

@@ -27,8 +27,9 @@ SAMPLE = DEMOS / "sample-app"
 FILE_HEADER = re.compile(
     r"^`("
     r"[A-Za-z0-9_./\-]+\.[A-Za-z0-9_+]+"
-    r"|Dockerfile(?:\.[A-Za-z0-9_-]+)?|Makefile|\.env(?:\.[A-Za-z0-9_-]+)?|\.dockerignore|\.gitignore"
-    r")`(?:\s+(?:[—\-:(].*|\([^)]*\).*))?\s*$"   # allow trailing " — desc" or " (desc)"
+    r"|Dockerfile(?:\.[A-Za-z0-9_-]+)?|Makefile|CODEOWNERS|LICENSE"
+    r"|\.env(?:\.[A-Za-z0-9_-]+)?|\.dockerignore|\.gitignore"
+    r")`(?:\s+(?:[—\-:(].*|\([^)]*\).*))?\s*$"   # allow trailing " — desc" / " (desc)"
 )
 FENCE = re.compile(r"^```([A-Za-z0-9_+-]*)\s*$")
 
@@ -39,7 +40,17 @@ DOCKER_LIKE = ("docker", "kubernetes", "kind", "ingress", "gateway", "scal",
 
 
 def parse_md(md_path: Path):
-    lines = md_path.read_text().splitlines()
+    full = md_path.read_text()
+    # Restrict file extraction to the "## Complete Code" section ONLY.
+    # Stops backticked filenames inside Expected Output / Walkthrough from being treated as files.
+    m = re.search(r"^## Complete Code\s*$", full, re.MULTILINE)
+    if not m:
+        return
+    start = m.end()
+    next_section = re.search(r"^## (?!Complete Code)", full[start:], re.MULTILINE)
+    end = start + next_section.start() if next_section else len(full)
+    section = full[start:end]
+    lines = section.splitlines()
     i, n = 0, len(lines)
     while i < n:
         m = FILE_HEADER.match(lines[i].strip())
@@ -145,7 +156,16 @@ def rewrite_paths(text: str) -> str:
 
 
 def extract_bash(md_path: Path) -> str:
-    lines = md_path.read_text().splitlines()
+    full = md_path.read_text()
+    # Strip out the "## Complete Code" section — code blocks there are file contents,
+    # not commands to run.
+    m = re.search(r"^## Complete Code\s*$", full, re.MULTILINE)
+    if m:
+        start = m.end()
+        next_section = re.search(r"^## (?!Complete Code)", full[start:], re.MULTILINE)
+        end = start + next_section.start() if next_section else len(full)
+        full = full[:m.start()] + full[end:]
+    lines = full.splitlines()
     i, n = 0, len(lines)
     in_block = False
     blocks: list[str] = []

@@ -1,0 +1,29 @@
+# CodeQL with the actions security pack — flags missing permissions and
+# expression-injection in run: blocks.
+name: CodeQL
+on:
+  push:        { branches: [main] }
+  pull_request:
+  schedule:    [{ cron: '0 6 * * 2' }]   # Tuesdays 06:00 UTC
+
+permissions: {}
+
+jobs:
+  analyze:
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [actions, python]
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+        with: { persist-credentials: false }
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          queries: security-and-quality
+      - uses: github/codeql-action/analyze@v3

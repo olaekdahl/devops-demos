@@ -11,6 +11,21 @@
 - Marketplace actions (`actions/checkout`, `actions/setup-python`).
 - The implicit `GITHUB_TOKEN` and `GITHUB_*` env vars.
 
+## Quick Start
+Run the demo end-to-end:
+
+```bash
+cd demos/06-github-actions-basics
+mkdir -p demos/06-github-actions-basics/.github/workflows
+cd demos/06-github-actions-basics
+# (create hello.yaml above)
+git init && git branch -m main
+git add . && git commit -m "ci: hello workflow"
+# Push into your devops-<initials> repo's main branch (or a separate repo)
+git remote add origin https://github.com/<account>/devops-<initials>.git
+git push -u origin main
+```
+
 ## Real-World Relevance
 GitHub Actions is the default CI/CD for any repo on GitHub. It replaces or
 augments Jenkins, CircleCI, GitLab CI in most new projects.

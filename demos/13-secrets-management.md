@@ -12,6 +12,20 @@
 - GitHub Environments and required reviewers
 - AWS access keys (Lab pattern) vs OIDC (best practice)
 
+## Quick Start
+Configuration is done in the GitHub UI; the workflow then consumes it.
+
+1. Repo → **Settings → Secrets and variables → Actions** → add `MY_SECRET`, `AWS_ACCESS_KEY`, `AWS_SECRET_KEY` (lab-only), and an Environment `production` with required reviewers.
+2. For OIDC (production): create an IAM role with a trust policy for `token.actions.githubusercontent.com` and store its ARN as `AWS_ROLE_ARN`.
+3. Push the workflow:
+
+```bash
+cd demos/13-secrets-management
+git add .github/workflows/ && git commit -m "ci: secrets demo" && git push
+```
+
+4. **Actions → Secrets demo → Run workflow** and confirm the secret appears as `***` in logs.
+
 ## Real-World Relevance
 Hardcoded secrets in code are the #1 cause of cloud breaches. Modern CI uses
 short-lived federated credentials (OIDC) to assume IAM roles without storing

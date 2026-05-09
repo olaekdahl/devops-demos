@@ -11,6 +11,22 @@
 - Public vs private; auth via token
 - Pulling by digest for reproducibility
 
+## Quick Start
+Run the demo end-to-end:
+
+```bash
+cd demos/29-container-registries
+docker build -t devops-app:1.0.0 .
+
+docker login                                      # username + token (NOT password)
+
+docker tag  devops-app:1.0.0  <user>/devops-app:1.0.0
+docker tag  devops-app:1.0.0  <user>/devops-app:latest
+
+docker push <user>/devops-app:1.0.0
+docker push <user>/devops-app:latest
+```
+
 ## Real-World Relevance
 Every container goes through a registry on the way to production. Choice of
 registry (Docker Hub, ECR, GHCR, GAR, Artifactory) matters for cost, security,

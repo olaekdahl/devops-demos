@@ -4,6 +4,13 @@
 # Run blocks individually rather than the whole script if unsure.
 set -euo pipefail
 
+git checkout -b docs/add-readme
+# edit README.md
+# git add README.md && git commit -m "docs: add README"  # parent-repo op — review & run manually
+# git push -u origin docs/add-readme  # parent-repo op — review & run manually
+
+# --- next block ---
+
 cd .            # reuse the repo from Demo 3
 git switch -c docs/add-readme
 

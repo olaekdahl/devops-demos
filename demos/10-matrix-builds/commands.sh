@@ -9,3 +9,11 @@ cp app.py requirements.txt
 cp tests/test_app.py tests/
 # Add matrix.yaml above
 # git add . && git commit -m "ci: matrix build" && git push  # parent-repo op — review & run manually
+
+# --- next block ---
+
+mkdir -p tests .github/workflows
+cp app.py requirements.txt 
+cp tests/test_app.py tests/
+# Add matrix.yaml above
+# git add . && git commit -m "ci: matrix build" && git push  # parent-repo op — review & run manually

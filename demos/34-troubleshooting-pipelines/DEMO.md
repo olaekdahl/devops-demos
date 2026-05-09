@@ -12,6 +12,16 @@
 - Workflow visualization, job logs, annotations
 - Difference between *workflow file* errors and *step* errors
 
+## Quick Start
+Run the demo end-to-end:
+
+```bash
+cd demos/34-troubleshooting-pipelines
+# Install act (https://github.com/nektos/act)
+brew install act    # or scoop / apt
+act -j fail
+```
+
 ## Real-World Relevance
 Pipelines fail. Students will spend a lot of their professional lives
 diagnosing CI failures. A tight debugging loop is a career skill.
@@ -85,6 +95,19 @@ jobs:
       - run: echo "got ${{ steps.ver.outputs.version }}"
 ```
 
+`fix-broken.md`
+```
+BUG 1 -> use @v5 (pinned to a real major)
+BUG 2 -> use heredoc 'EOF' (single quotes) to disable expansion if not desired,
+         or just trust the shell to expand $USER at runtime — the bug here
+         was assuming $USER inside heredoc would be the GitHub user.
+BUG 3 -> add tests/ directory and tests, or remove pytest step.
+         Use `set -e` (Actions does this by default for `run:` since 2024)
+         and `if: ${{ !cancelled() }}` to ensure subsequent steps still run when needed.
+BUG 4 -> never `set -x` with secrets; even masking can fail when split or transformed.
+BUG 5 -> echo "version=1.2.3" >> "$GITHUB_OUTPUT"
+```
+
 ## Step-by-Step Walkthrough
 
 ### 1. Read the failure
@@ -124,18 +147,7 @@ act -j fail
 
 ### 6. Fix all the bugs (see `fix-broken.md`)
 
-`fix-broken.md`
-```
-BUG 1 -> use @v5 (pinned to a real major)
-BUG 2 -> use heredoc 'EOF' (single quotes) to disable expansion if not desired,
-         or just trust the shell to expand $USER at runtime — the bug here
-         was assuming $USER inside heredoc would be the GitHub user.
-BUG 3 -> add tests/ directory and tests, or remove pytest step.
-         Use `set -e` (Actions does this by default for `run:` since 2024)
-         and `if: ${{ !cancelled() }}` to ensure subsequent steps still run when needed.
-BUG 4 -> never `set -x` with secrets; even masking can fail when split or transformed.
-BUG 5 -> echo "version=1.2.3" >> "$GITHUB_OUTPUT"
-```
+The answer key was extracted alongside this file as `fix-broken.md`.
 
 ## Expected Output
 

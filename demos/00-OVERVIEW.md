@@ -77,3 +77,4 @@ Each `NN-topic/` folder contains:
 | 36 | [36-devops-anti-patterns/](36-devops-anti-patterns/) | What NOT to do |
 | 37 | [37-observability-basics/](37-observability-basics/) | Metrics/logs/traces |
 | 38 | [38-logging-and-monitoring/](38-logging-and-monitoring/) | Stack walkthrough |
+| 39 | [39-supply-chain-security/](39-supply-chain-security/) | Protecting a global consulting firm from supply-chain attacks (Cosign, SBOM, SLSA, SHA pinning) |

@@ -10,6 +10,19 @@
 - Required reviews, required status checks (preview — fully covered in Demo 33)
 - Why direct pushes to `main` are an anti-pattern in shared repos
 
+## Quick Start
+This demo runs in the **GitHub UI**, not on the command line. From your fork:
+
+```bash
+cd demos/04-pull-requests
+git checkout -b docs/add-readme
+# edit README.md
+git add README.md && git commit -m "docs: add README"
+git push -u origin docs/add-readme
+```
+
+Then open GitHub → **Compare & pull request** → fill in template → request review → **Squash and merge**.
+
 ## Real-World Relevance
 PRs are the single most common collaboration artifact in modern engineering
 orgs. They are also the place where CI status, security scans, and compliance

@@ -11,6 +11,21 @@
 - `needs:` for sequencing (deep dive in Demo 12)
 - Smoke tests as a safety net
 
+## Quick Start
+Run the demo end-to-end:
+
+```bash
+cd demos/08-cicd-pipelines
+mkdir -p demos/08-cicd-pipelines/tests demos/08-cicd-pipelines/.github/workflows
+cp demos/sample-app/app.py demos/08-cicd-pipelines/
+cp demos/sample-app/requirements.txt demos/08-cicd-pipelines/
+cp demos/sample-app/tests/test_app.py demos/08-cicd-pipelines/tests/
+# create the workflow file above
+git add demos/08-cicd-pipelines
+git commit -m "ci: add full pipeline"
+git push
+```
+
 ## Real-World Relevance
 This is the canonical CI/CD pipeline shape used by 90% of services in industry.
 The exact tools change (lint, scan, registry, deploy target), the *shape* does not.

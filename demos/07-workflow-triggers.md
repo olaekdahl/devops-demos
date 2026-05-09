@@ -12,6 +12,20 @@
 - `paths:` filters to skip irrelevant runs
 - `inputs:` for parameterized manual runs
 
+## Quick Start
+Push the workflows, then exercise each trigger from GitHub:
+
+```bash
+cd demos/07-workflow-triggers
+git add .github/workflows/ && git commit -m "ci: trigger demos" && git push
+```
+
+- **push**: any commit to `main` runs `ci.yaml`.
+- **pull_request**: open a PR → `pr.yaml` runs.
+- **schedule**: wait for the cron, or use **Actions → Run workflow** to trigger manually.
+- **issues**: open a new issue → `issue.yaml` auto-labels it.
+- **workflow_dispatch**: **Actions → Deploy → Run workflow** with an environment input.
+
 ## Real-World Relevance
 Triggers are how CI/CD becomes **event-driven** instead of "Bob pushes a button
 on Jenkins". Real teams trigger nightly jobs (security scans), on-demand

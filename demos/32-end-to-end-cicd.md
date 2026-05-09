@@ -12,6 +12,33 @@
 - `aws eks update-kubeconfig` from CI.
 - `kubectl apply -f deployment.yaml` with image tag substitution.
 
+## Quick Start
+Run the demo end-to-end:
+
+```bash
+cd demos/32-end-to-end-cicd
+# 1. Verify EKS is running (Demo 31)
+kubectl get nodes
+
+# 2. Set GitHub secrets in your repo:
+#    AWS_ACCESS_KEY, AWS_SECRET_KEY,
+#    ARTIFACTORY_URL, ARTIFACTORY_USER, ARTIFACTORY_TOKEN
+
+# 3. Configure GitHub Environment 'production' with required reviewers (yourself)
+
+# 4. Push the workflow + manifests
+cd demos/32-end-to-end-cicd
+git add . && git commit -m "feat: end-to-end pipeline" && git push origin main
+
+# 5. Watch the pipeline in the Actions tab
+#    test → build-and-push → (manual approval) → deploy → smoke
+
+# 6. Verify in cluster
+kubectl get deploy,svc,pods
+DNS=$(kubectl get svc devops-app-lb -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+curl http://$DNS/version
+```
+
 ## Real-World Relevance
 This is the canonical "deploy to Kubernetes from CI" pipeline used by thousands
 of services. Substitute "JFrog → ECR" and you have the AWS-native version;
@@ -23,13 +50,13 @@ of services. Substitute "JFrog → ECR" and you have the AWS-native version;
         │
         ▼
    GitHub Actions
-   ┌──────────────────────────────────────────────┐
-   │ 1. lint   ─►  2. test ─►  3. build+push  ─►  4. deploy(EKS)  ─► 5. smoke
-   │                              │                  │
-   │                              ▼                  ▼
-   │                       JFrog Artifactory   `kubectl apply`
-   │                       <repo>/devops:SHA   to devops-cluster
-   └──────────────────────────────────────────────┘
+   ┌─────────────────────────────────────────────────────────────────────────┐
+   │ 1. lint  ─►  2. test  ─►  3. build+push  ─►  4. deploy(EKS)  ─► 5. smoke│
+   │                              │                  │                       │
+   │                              ▼                  ▼                       │
+   │                       JFrog Artifactory   `kubectl apply`               │
+   │                       <repo>/devops:SHA   to devops-cluster             │
+   └─────────────────────────────────────────────────────────────────────────┘
 ```
 
 ## Instructor Notes

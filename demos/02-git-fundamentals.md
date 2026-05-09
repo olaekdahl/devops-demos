@@ -10,6 +10,63 @@
   `git diff`, `git branch`, `git switch`/`checkout`, `git merge`, `.gitignore`.
 - Three Git "areas": working directory → staging → repository.
 
+## Quick Start
+Run the demo end-to-end:
+
+```bash
+cd demos/02-git-fundamentals
+mkdir -p demos/02-git-fundamentals && cd demos/02-git-fundamentals
+
+# 1. Identity (once per machine)
+git config --global user.name  "Lab Admin"
+git config --global user.email "labadmin@example.com"
+
+# 2. Initialize
+git init
+git branch -m main          # rename default branch to main
+
+# 3. First commit
+echo "# Hello Git" > README.md
+git status                  # README.md is "untracked"
+git add README.md
+git status                  # now "staged"
+git commit -m "initial commit"
+git log --oneline
+
+# 4. Ignoring files
+echo "venv/"        >> .gitignore
+echo "__pycache__/" >> .gitignore
+git add .gitignore && git commit -m "add gitignore"
+
+# 5. Branching
+git switch -c feature/greeting
+echo "Hello, students!" >> README.md
+git commit -am "add greeting"
+git log --oneline --graph --all
+
+# 6. Merge fast-forward
+git switch main
+git merge feature/greeting
+git branch -d feature/greeting
+
+# 7. Force a merge conflict (great teaching moment)
+git switch -c feature/a
+sed -i 's/students/devops engineers/' README.md
+git commit -am "rename audience to devops engineers"
+
+git switch main
+git switch -c feature/b
+sed -i 's/students/cloud engineers/' README.md
+git commit -am "rename audience to cloud engineers"
+
+git switch main
+git merge feature/a            # ok
+git merge feature/b            # CONFLICT
+# Resolve manually, then:
+git add README.md
+git commit                      # editor opens with merge message
+```
+
 ## Real-World Relevance
 Git underlies virtually all modern software collaboration. Even one-developer
 projects benefit from history, blame, bisect, and reproducible builds anchored

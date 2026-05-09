@@ -11,6 +11,29 @@
 - Why CI must run the same tests as your laptop
 - Fast vs slow tests; deterministic tests
 
+## Quick Start
+Run the demo end-to-end:
+
+```bash
+cd demos/09-unit-testing
+mkdir -p demos/09-unit-testing/tests
+cp demos/sample-app/* demos/09-unit-testing/ 2>/dev/null || true
+cp -r demos/sample-app/tests demos/09-unit-testing/
+cd demos/09-unit-testing
+
+python3 -m venv venv && source venv/bin/activate
+pip install -r requirements.txt pytest httpx pytest-cov
+
+# Run all tests
+PYTHONPATH=$(pwd) pytest -v tests/
+
+# Run only the health test
+PYTHONPATH=$(pwd) pytest -v -k health tests/
+
+# With coverage
+PYTHONPATH=$(pwd) pytest --cov=app --cov-report=term-missing tests/
+```
+
 ## Real-World Relevance
 Unit tests are the cheapest, fastest safety net. Every PR should run them.
 Companies often gate merges on **green tests + coverage threshold**.

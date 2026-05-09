@@ -12,6 +12,33 @@
 - OpenTelemetry as the unifying standard
 - SLI/SLO/SLA mental model
 
+## Quick Start
+Run the demo end-to-end:
+
+```bash
+cd demos/37-observability-basics
+docker compose up -d --build
+
+# Generate traffic
+for i in $(seq 1 50); do curl -s localhost:8000/work > /dev/null; done
+
+# Logs (structured)
+docker compose logs app | tail
+# {"event":"http_request","level":"info","method":"GET","path":"/work","status":200,"duration_ms":214,...}
+
+# Metrics
+curl -s localhost:8000/metrics | grep http_requests_total | head
+
+# Prometheus UI
+open http://localhost:9090     # query: rate(http_requests_total[1m])
+
+# Grafana UI (anonymous admin)
+open http://localhost:3000     # add Prometheus DS http://prometheus:9090; build a graph
+
+# Traces in Jaeger
+open http://localhost:16686    # service: 'unknown_service:python' or your OTEL_SERVICE_NAME
+```
+
 ## Real-World Relevance
 Modern distributed systems can't be debugged with logs alone. Observability is
 the difference between "the system is down" and "request 7c3f failed at the

@@ -13,6 +13,16 @@
 - Policy as code (OPA / Conftest)
 - Observability hooks at each stage
 
+## Quick Start
+Push the workflow and observe the full quality → build → policy → canary → promote pipeline.
+
+```bash
+cd demos/33-production-pipeline-concepts
+git add . && git commit -m "ci: production pipeline" && git push
+```
+
+Watch in the **Actions** tab. Approve the `production` environment when prompted. The `rollback-on-failure` job runs only when an upstream job fails — to demo it, push a commit that intentionally breaks the trivy scan or policy check.
+
 ## Real-World Relevance
 Real organizations are audited (SOC 2, ISO, PCI). They also get attacked. A
 hardened pipeline reduces both risk and audit pain.

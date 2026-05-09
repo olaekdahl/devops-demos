@@ -11,6 +11,19 @@
 - Inspecting container metadata (state, mounts, networks)
 - Common failures: bad CMD, missing file, port conflict, crash loop
 
+## Quick Start
+Run the demo end-to-end:
+
+```bash
+cd demos/17-docker-debugging
+docker build -f Dockerfile.broken1 -t bad1 .
+docker run -d --name bad1 -p 8000:8000 bad1
+docker ps -a                           # status: Exited (1)
+docker logs bad1
+# ► ERROR: Error loading ASGI app. Could not import module "apps".
+docker rm bad1
+```
+
 ## Real-World Relevance
 Every container engineer spends 30% of their time debugging containers.
 Knowing the four commands above instinctively is a force multiplier.

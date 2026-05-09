@@ -4,17 +4,25 @@
 # Run blocks individually rather than the whole script if unsure.
 set -euo pipefail
 
-#!/usr/bin/env bash
-ARTIFACTORY_URL=${ARTIFACTORY_URL:?set me}
-USER=${USER:?set me}
-TOKEN=${TOKEN:?set me}
+kubectl apply -f secret-opaque.yaml
 
-kubectl create secret docker-registry jfrog-pull-secret \
-  --docker-server="$ARTIFACTORY_URL" \
-  --docker-username="$USER" \
-  --docker-password="$TOKEN" \
-  --docker-email="lab@example.com" \
-  --dry-run=client -o yaml | kubectl apply -f -
+# (For Capstone) create an image-pull secret too
+ARTIFACTORY_URL=... USER=... TOKEN=... bash pull-secret.sh
+
+kubectl apply -f deployment.yaml
+kubectl rollout status deployment/devops-app
+POD=$(kubectl get pod -l app=devops-app -o jsonpath='{.items[0].metadata.name}')
+
+# Env var injection
+kubectl exec $POD -- printenv SECRET_KEY
+
+# File mount
+kubectl exec $POD -- ls -l /etc/creds/
+kubectl exec $POD -- cat /etc/creds/db.password
+
+# Inspect the stored Secret (base64 — show the lack of encryption)
+kubectl get secret app-creds -o yaml
+echo c3VwZXItc2VjcmV0LWRvLW5vdC1wcmludA== | base64 -d
 
 # --- next block ---
 

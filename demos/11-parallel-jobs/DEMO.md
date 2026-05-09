@@ -10,6 +10,18 @@
 - Cost vs latency tradeoffs
 - Where parallel jobs share state (artifacts) vs don't (env, FS)
 
+## Quick Start
+Run the demo end-to-end:
+
+```bash
+cd demos/11-parallel-jobs
+mkdir -p demos/11-parallel-jobs/tests demos/11-parallel-jobs/.github/workflows
+cp demos/sample-app/app.py demos/sample-app/requirements.txt demos/11-parallel-jobs/
+cp demos/sample-app/tests/test_app.py demos/11-parallel-jobs/tests/
+# add parallel.yaml above
+git add . && git commit -m "ci: parallel jobs" && git push
+```
+
 ## Real-World Relevance
 Pipeline wall-clock is a developer-experience metric. Parallelizing lint,
 unit tests, security scan, and build cuts feedback time from minutes to seconds.

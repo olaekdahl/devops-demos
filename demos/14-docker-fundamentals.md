@@ -12,6 +12,19 @@
 - Docker engine architecture: client → daemon → containerd → runc
 - Image vs container vs registry
 
+## Quick Start
+Run the demo end-to-end:
+
+```bash
+cd demos/14-docker-fundamentals
+# Create a process in its own PID + UTS namespace.
+sudo unshare --pid --uts --fork --mount-proc /bin/bash
+# Inside that bash:
+hostname new-isolated-host        # only changed in this namespace
+ps -ef                            # PID 1 is *this* bash
+exit
+```
+
 ## Real-World Relevance
 Containers are the unit of deployment everywhere — Kubernetes, ECS, Cloud Run,
 Lambda (under the hood). Understanding **what** Docker really gives you (Linux
@@ -19,14 +32,11 @@ process isolation in a portable bundle) is foundational.
 
 ## Demo Architecture
 ```
-   ┌───────────────────────── Host Linux Kernel ─────────────────────────┐
-   │                                                                     │
-   │  process tree:  PID 1 (init)  ─►  containerd  ─►  runc  ─►  pid=42  │
-   │                                                          │          │
-   │                                                          └─► nginx  │
-   │                                                              [container]
-   │                                                              isolated by namespaces
-   └─────────────────────────────────────────────────────────────────────┘
+   ┌──────────────────────── Host Linux Kernel ─────────────────────────┐
+   │                                                                    │
+   │  PID 1 (init) ─► containerd ─► runc ─► pid=42 ─► nginx [container] │
+   │                                                  (isolated by NS)  │
+   └────────────────────────────────────────────────────────────────────┘
 ```
 
 A container = a normal Linux process **wrapped in namespaces & cgroups**.

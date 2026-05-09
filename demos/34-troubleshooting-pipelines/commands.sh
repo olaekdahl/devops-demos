@@ -7,3 +7,9 @@ set -euo pipefail
 # Install act (https://github.com/nektos/act)
 brew install act    # or scoop / apt
 act -j fail
+
+# --- next block ---
+
+# Install act (https://github.com/nektos/act)
+brew install act    # or scoop / apt
+act -j fail

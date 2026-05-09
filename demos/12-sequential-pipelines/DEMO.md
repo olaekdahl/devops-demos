@@ -10,6 +10,18 @@
 - `needs:`, `if:`, `outputs:`, `env:`
 - Conditional deploys (only on `main`, only on tag)
 
+## Quick Start
+Run the demo end-to-end:
+
+```bash
+cd demos/12-sequential-pipelines
+mkdir -p demos/12-sequential-pipelines/tests demos/12-sequential-pipelines/.github/workflows
+cp demos/sample-app/app.py demos/sample-app/requirements.txt demos/12-sequential-pipelines/
+cp demos/sample-app/tests/test_app.py demos/12-sequential-pipelines/tests/
+# add staged.yaml above
+git add . && git commit -m "ci: staged pipeline" && git push
+```
+
 ## Real-World Relevance
 Most production pipelines mix parallel + sequential: parallel where possible,
 sequential where order matters (build → publish → deploy).

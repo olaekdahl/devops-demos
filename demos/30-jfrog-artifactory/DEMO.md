@@ -11,6 +11,44 @@
 - `docker login` with Artifactory access token
 - K8s pull secret of type `dockerconfigjson`
 
+## Quick Start
+Run the demo end-to-end:
+
+```bash
+cd demos/30-jfrog-artifactory
+INITIALS=oe                                 # your initials
+ARTIFACTORY_URL=mycompany.jfrog.io
+REPO=devops-docker-local
+
+# 1. Build local
+docker build -t devops-app:1.0.0 .
+
+# 2. Login to Artifactory
+echo "$ARTIFACTORY_TOKEN" | docker login "$ARTIFACTORY_URL" -u "$ARTIFACTORY_USER" --password-stdin
+
+# 3. Tag & push
+IMAGE="$ARTIFACTORY_URL/$REPO/${INITIALS}-devops:1.0.0"
+docker tag devops-app:1.0.0 "$IMAGE"
+docker push "$IMAGE"
+
+# 4. Verify via the JFrog UI (or REST):
+curl -u "$ARTIFACTORY_USER:$ARTIFACTORY_TOKEN" \
+  "https://$ARTIFACTORY_URL/artifactory/api/repositories/$REPO"
+
+# 5. Create K8s pull secret
+ARTIFACTORY_USER="$ARTIFACTORY_USER" ARTIFACTORY_TOKEN="$ARTIFACTORY_TOKEN" \
+  ARTIFACTORY_URL="$ARTIFACTORY_URL" bash pull-secret.sh
+
+# 6. Deploy
+sed -e "s|__ARTIFACTORY_URL__|$ARTIFACTORY_URL|" \
+    -e "s|__REPO__|$REPO|" \
+    -e "s|__INITIALS__|$INITIALS|" \
+    deployment.yaml | kubectl apply -f -
+
+kubectl rollout status deployment/devops-app
+kubectl get svc devops-app-svc
+```
+
 ## Real-World Relevance
 Artifactory and Nexus are the two most common enterprise binary repos. They
 provide a single audited place for ALL build outputs (containers, libs,

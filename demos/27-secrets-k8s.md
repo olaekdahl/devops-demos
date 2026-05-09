@@ -11,6 +11,32 @@
 - Mounted secret files have permissions 0444 by default
 - Encryption-at-rest (KMS) vs Sealed Secrets / SOPS / External Secrets
 
+## Quick Start
+Run the demo end-to-end:
+
+```bash
+cd demos/27-secrets-k8s
+kubectl apply -f secret-opaque.yaml
+
+# (For Capstone) create an image-pull secret too
+ARTIFACTORY_URL=... USER=... TOKEN=... bash pull-secret.sh
+
+kubectl apply -f deployment.yaml
+kubectl rollout status deployment/devops-app
+POD=$(kubectl get pod -l app=devops-app -o jsonpath='{.items[0].metadata.name}')
+
+# Env var injection
+kubectl exec $POD -- printenv SECRET_KEY
+
+# File mount
+kubectl exec $POD -- ls -l /etc/creds/
+kubectl exec $POD -- cat /etc/creds/db.password
+
+# Inspect the stored Secret (base64 — show the lack of encryption)
+kubectl get secret app-creds -o yaml
+echo c3VwZXItc2VjcmV0LWRvLW5vdC1wcmludA== | base64 -d
+```
+
 ## Real-World Relevance
 Every K8s app uses Secrets — DB credentials, API keys, registry pull secrets,
 TLS certificates. Doing it wrong = breach.

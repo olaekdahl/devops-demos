@@ -12,6 +12,24 @@
 - Repo visibility (private/public/internal)
 - README, default branch, branch protection (preview)
 
+## Quick Start
+Run the demo end-to-end:
+
+```bash
+cd demos/03-github-fundamentals
+mkdir -p demos/03-github-fundamentals && cd demos/03-github-fundamentals
+git init && git branch -m main
+echo "# devops-<initials>" > README.md
+git add . && git commit -m "initial commit"
+
+# Wire up the remote
+git remote add origin https://github.com/<account>/devops-<initials>.git
+git remote -v        # verify
+
+# First push — will prompt for username and PAT (paste PAT as password)
+git push -u origin main
+```
+
 ## Real-World Relevance
 GitHub (or GitHub Enterprise) is the source-of-truth code host for most
 companies. Every CI pipeline, every deployment, every audit log starts from a

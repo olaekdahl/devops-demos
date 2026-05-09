@@ -13,6 +13,15 @@ docker rm bad1
 
 # --- next block ---
 
+docker build -f Dockerfile.broken1 -t bad1 .
+docker run -d --name bad1 -p 8000:8000 bad1
+docker ps -a                           # status: Exited (1)
+docker logs bad1
+# ► ERROR: Error loading ASGI app. Could not import module "apps".
+docker rm bad1
+
+# --- next block ---
+
 docker build -f Dockerfile.broken2 -t bad2 .
 docker run -d --name bad2 -p 3000:3000 bad2
 docker logs bad2                        # uvicorn says "listening on 8000"

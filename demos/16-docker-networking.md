@@ -10,6 +10,15 @@
 - DNS resolution by container name on user-defined networks
 - Port mapping (`-p host:container`) vs container-to-container traffic
 
+## Quick Start
+Run the demo end-to-end:
+
+```bash
+cd demos/16-docker-networking
+docker network ls
+docker network inspect bridge | head -30
+```
+
 ## Real-World Relevance
 Service-to-service communication inside Docker (and inside Kubernetes) relies on
 the same idea: each service gets a DNS name. Understanding it on Docker first
@@ -17,12 +26,12 @@ makes Kubernetes Services intuitive.
 
 ## Demo Architecture
 ```
-   ┌────────────── user-defined bridge "appnet" ──────────────┐
-   │                                                          │
-   │   [api]:8000  ◄── DNS "api"  ──  [client]                │
-   │       │                              │                    │
-   │       └── EXPOSE 8000                └── curl http://api:8000/health
-   └──────────────────────────────────────────────────────────┘
+   ┌──────────────── user-defined bridge "appnet" ─────────────────┐
+   │                                                               │
+   │   [api]:8000  ◄── DNS "api"  ──  [client]                     │
+   │       │                              │                        │
+   │       └── EXPOSE 8000                └── curl api:8000/health │
+   └───────────────────────────────────────────────────────────────┘
        host port 8000  ◄── -p 8000:8000  (only api is published)
 ```
 

@@ -4,21 +4,34 @@
 # Run blocks individually rather than the whole script if unsure.
 set -euo pipefail
 
-#!/usr/bin/env bash
+INITIALS=oe                                 # your initials
+ARTIFACTORY_URL=mycompany.jfrog.io
+REPO=devops-docker-local
 
-# Lab values supplied by your instructor:
-ARTIFACTORY_URL=${ARTIFACTORY_URL:-mycompany.jfrog.io}
-ARTIFACTORY_USER=${ARTIFACTORY_USER:?missing}
-ARTIFACTORY_TOKEN=${ARTIFACTORY_TOKEN:?missing}
+# 1. Build local
+docker build -t devops-app:1.0.0 .
 
-kubectl create secret docker-registry jfrog-pull-secret \
-  --docker-server="$ARTIFACTORY_URL" \
-  --docker-username="$ARTIFACTORY_USER" \
-  --docker-password="$ARTIFACTORY_TOKEN" \
-  --docker-email="lab@example.com" \
-  --dry-run=client -o yaml | kubectl apply -f -
+# 2. Login to Artifactory
+echo "$ARTIFACTORY_TOKEN" | docker login "$ARTIFACTORY_URL" -u "$ARTIFACTORY_USER" --password-stdin
 
-echo "Created/updated K8s secret jfrog-pull-secret"
+# 3. Tag & push
+IMAGE="$ARTIFACTORY_URL/$REPO/${INITIALS}-devops:1.0.0"
+docker tag devops-app:1.0.0 "$IMAGE"
+docker push "$IMAGE"
+
+# 4. Verify via the JFrog UI (or REST):
+curl -u "$ARTIFACTORY_USER:$ARTIFACTORY_TOKEN" \
+
+# 5. Create K8s pull secret
+ARTIFACTORY_USER="$ARTIFACTORY_USER" ARTIFACTORY_TOKEN="$ARTIFACTORY_TOKEN" \
+  ARTIFACTORY_URL="$ARTIFACTORY_URL" bash pull-secret.sh
+
+# 6. Deploy
+sed -e "s|__ARTIFACTORY_URL__|$ARTIFACTORY_URL|" \
+    deployment.yaml | kubectl apply -f -
+
+kubectl rollout status deployment/devops-app
+kubectl get svc devops-app-svc
 
 # --- next block ---
 

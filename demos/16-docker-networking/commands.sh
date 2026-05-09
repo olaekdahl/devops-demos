@@ -9,6 +9,11 @@ docker network inspect bridge | head -30
 
 # --- next block ---
 
+docker network ls
+docker network inspect bridge | head -30
+
+# --- next block ---
+
 docker run -d --name api  devops-app:1.0.0           # no published port needed for inter-container
 docker run --rm curlimages/curl curl -m2 http://api:8000/health
 # ► curl: (6) Could not resolve host: api

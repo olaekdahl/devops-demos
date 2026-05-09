@@ -11,6 +11,41 @@
 - Resource **requests** are mandatory for HPA to compute utilization.
 - HPA v2 with multiple metrics; VPA / Cluster Autoscaler (preview).
 
+## Quick Start
+Run the demo end-to-end:
+
+```bash
+cd demos/25-scaling-workloads
+
+# 1. Metrics server (needed for HPA)
+bash install-metrics-server.sh
+kubectl top nodes
+kubectl top pods
+
+# 2. Manual scale first
+kubectl scale deployment devops-app --replicas=2
+kubectl get pods -l app=devops-app
+
+# 3. Apply HPA
+kubectl apply -f hpa.yaml
+kubectl get hpa
+
+# 4. Hammer the service
+kubectl apply -f loadgen.yaml
+
+# 5. Watch HPA scale up
+kubectl get hpa -w &
+WATCH=$!
+sleep 90
+kill $WATCH
+
+# 6. After load stops, watch scale-down ~ 1 minute later
+kubectl get hpa -w
+
+# Cleanup
+kubectl delete -f hpa.yaml -f loadgen.yaml
+```
+
 ## Real-World Relevance
 Auto-scaling is the cost-savings + reliability trick that lets you serve traffic
 spikes without overprovisioning during quiet hours.

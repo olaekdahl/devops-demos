@@ -11,6 +11,19 @@
 - Lightweight project management inside the source repo
 - Issue templates (preview)
 
+## Quick Start
+Almost entirely a **GitHub UI** demo. Steps:
+
+1. In the repo on GitHub: **Issues → New issue** → pick the *Bug report* template (file in `.github/ISSUE_TEMPLATE/bug_report.yml`).
+2. File the issue, add labels (`bug`, `priority/high`).
+3. Create a fix branch and PR; reference the issue with `Fixes #N` in the PR body.
+4. Merging the PR auto-closes the issue.
+
+```bash
+cd demos/05-github-issues
+git add .github/ISSUE_TEMPLATE/ && git commit -m "chore: issue templates" && git push
+```
+
 ## Real-World Relevance
 Issues + PRs + Actions form the "GitHub-native" project workflow used by many
 small/medium teams instead of separate Jira instances. Larger teams sync
