@@ -1,30 +1,32 @@
 # Demo 16 — Docker Networking
 
+## How to Run
+
+All files needed by this demo are already in this folder. Run from inside it:
+
+```bash
+docker network ls
+docker network inspect bridge | head -30
+```
+
+## Prerequisites
+
+- Docker.
+
 ## Learning Objectives
+
 - Understand the default `bridge` network and `host` mode.
 - Create a **user-defined bridge** so containers can find each other by name.
 - Publish ports vs link by service name.
 
 ## Concepts Covered
+
 - `bridge`, `host`, `none` network modes
 - DNS resolution by container name on user-defined networks
 - Port mapping (`-p host:container`) vs container-to-container traffic
 
-## Quick Start
-Run the demo end-to-end:
+## Architecture
 
-```bash
-cd demos/16-docker-networking
-docker network ls
-docker network inspect bridge | head -30
-```
-
-## Real-World Relevance
-Service-to-service communication inside Docker (and inside Kubernetes) relies on
-the same idea: each service gets a DNS name. Understanding it on Docker first
-makes Kubernetes Services intuitive.
-
-## Demo Architecture
 ```
    ┌──────────────── user-defined bridge "appnet" ─────────────────┐
    │                                                               │
@@ -35,33 +37,7 @@ makes Kubernetes Services intuitive.
        host port 8000  ◄── -p 8000:8000  (only api is published)
 ```
 
-## Instructor Notes
-- Show: on the **default** `bridge`, container-by-name DNS does NOT work.
-  On a **user-defined** bridge, it does. This is the most common gotcha.
-- `host` mode = container shares the host's network namespace; no isolation.
-
-## Prerequisites
-- Docker.
-
-## Folder Structure
-```
-demos/16-docker-networking/
-  Dockerfile          (re-uses sample-app)
-  app.py
-  requirements.txt
-```
-
-## Complete Code
-
-Re-use `Dockerfile` from Demo 15 and the sample app.
-
-## Step-by-Step Walkthrough
-
-### 1. Inspect default networks
-```bash
-docker network ls
-docker network inspect bridge | head -30
-```
+## Walkthrough
 
 ### 2. Default bridge — no DNS by name
 ```bash
@@ -106,6 +82,7 @@ docker network rm appnet
 ```
 
 ## Expected Output
+
 ```
 $ docker run --rm --network appnet curlimages/curl curl -s http://api:8000/health
 {"status":"OK","message":"The application is healthy!"}
@@ -114,7 +91,8 @@ $ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' a
 172.18.0.2
 ```
 
-## Common Failure Scenarios
+## Troubleshooting
+
 | Symptom | Cause | Fix |
 |---|---|---|
 | `Could not resolve host: api` | On the default `bridge` | Create user-defined bridge |
@@ -122,18 +100,33 @@ $ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' a
 | Cross-container traffic blocked | Containers on different networks | Put them on the same network or use `--network` |
 | Host can't reach container | Used `EXPOSE` only, forgot `-p` | `EXPOSE` is metadata; need `-p` |
 
-## DevOps Best Practices
+## Best Practices
+
 - Always use **user-defined networks** in real deployments.
 - Don't publish a port unless the host actually needs it.
 - One container, one purpose.
 
 ## Production Considerations
+
 - In Kubernetes, every Pod gets its own IP and can be addressed via Service DNS
   — same model, scaled up.
 - Network policies (Calico, Cilium) restrict which pods can talk to which.
 - For multi-host, use overlay networks (Docker Swarm) or Kubernetes CNI plugins.
 
 ## Optional Advanced Enhancements
+
 - `--network none` → fully isolated; no traffic in or out.
 - Compare with **Docker Compose** networks (next demo) — same concept, declarative.
 - Show NAT chain: `iptables -t nat -L DOCKER` after publishing a port.
+
+## Instructor Notes
+
+- Show: on the **default** `bridge`, container-by-name DNS does NOT work.
+  On a **user-defined** bridge, it does. This is the most common gotcha.
+- `host` mode = container shares the host's network namespace; no isolation.
+
+## Real-World Relevance
+
+Service-to-service communication inside Docker (and inside Kubernetes) relies on
+the same idea: each service gets a DNS name. Understanding it on Docker first
+makes Kubernetes Services intuitive.

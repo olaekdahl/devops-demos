@@ -1,22 +1,10 @@
 # Demo 14 — Docker Fundamentals
 
-## Learning Objectives
-- Explain what a Linux container actually *is* (namespaces + cgroups), before
-  introducing Docker syntax.
-- Distinguish images, containers, layers, and the Docker daemon.
-- Run a container and inspect it.
+## How to Run
 
-## Concepts Covered
-- Linux namespaces (`pid`, `net`, `mnt`, `uts`, `ipc`, `user`)
-- cgroups (CPU, memory limits)
-- Docker engine architecture: client → daemon → containerd → runc
-- Image vs container vs registry
-
-## Quick Start
-Run the demo end-to-end:
+All files needed by this demo are already in this folder. Run from inside it:
 
 ```bash
-cd demos/14-docker-fundamentals
 # Create a process in its own PID + UTS namespace.
 sudo unshare --pid --uts --fork --mount-proc /bin/bash
 # Inside that bash:
@@ -25,12 +13,26 @@ ps -ef                            # PID 1 is *this* bash
 exit
 ```
 
-## Real-World Relevance
-Containers are the unit of deployment everywhere — Kubernetes, ECS, Cloud Run,
-Lambda (under the hood). Understanding **what** Docker really gives you (Linux
-process isolation in a portable bundle) is foundational.
+## Prerequisites
 
-## Demo Architecture
+- Linux host with Docker installed (`docker --version` ≥ 25).
+
+## Learning Objectives
+
+- Explain what a Linux container actually *is* (namespaces + cgroups), before
+  introducing Docker syntax.
+- Distinguish images, containers, layers, and the Docker daemon.
+- Run a container and inspect it.
+
+## Concepts Covered
+
+- Linux namespaces (`pid`, `net`, `mnt`, `uts`, `ipc`, `user`)
+- cgroups (CPU, memory limits)
+- Docker engine architecture: client → daemon → containerd → runc
+- Image vs container vs registry
+
+## Architecture
+
 ```
    ┌──────────────────────── Host Linux Kernel ─────────────────────────┐
    │                                                                    │
@@ -42,32 +44,8 @@ process isolation in a portable bundle) is foundational.
 A container = a normal Linux process **wrapped in namespaces & cgroups**.
 There is no hypervisor; the kernel is shared.
 
-## Instructor Notes
-- Show `ps -ef` on host vs `ps -ef` *inside* a container — different process trees.
-- Show `unshare` (Linux command) doing 80% of what Docker does, to demystify it.
-- Common confusion: containers ≠ VMs. They share the host kernel.
+## Walkthrough
 
-## Prerequisites
-- Linux host with Docker installed (`docker --version` ≥ 25).
-
-## Folder Structure
-No source files — pure CLI demo.
-
-## Complete Code
-
-Pure shell — every command is the demo.
-
-## Step-by-Step Walkthrough
-
-### 1. Bare Linux: containers without Docker (concept proof)
-```bash
-# Create a process in its own PID + UTS namespace.
-sudo unshare --pid --uts --fork --mount-proc /bin/bash
-# Inside that bash:
-hostname new-isolated-host        # only changed in this namespace
-ps -ef                            # PID 1 is *this* bash
-exit
-```
 Now, `hostname` on the host is unchanged — proving namespaces isolate views.
 
 ### 2. Same idea, with Docker
@@ -112,6 +90,7 @@ docker rm -f $(docker ps -aq) 2>/dev/null
 ```
 
 ## Expected Output
+
 ```
 $ docker ps
 CONTAINER ID  IMAGE         COMMAND                  STATUS         PORTS                  NAMES
@@ -121,7 +100,8 @@ $ docker exec nginx-demo hostname
 a1b2c3d4e5f6
 ```
 
-## Common Failure Scenarios
+## Troubleshooting
+
 | Symptom | Cause | Fix |
 |---|---|---|
 | `permission denied` on docker.sock | User not in `docker` group | `sudo usermod -aG docker $USER` and re-login |
@@ -129,19 +109,34 @@ a1b2c3d4e5f6
 | `unshare: invalid option` | Old util-linux | Update package or run a Docker container instead |
 | Container exits immediately | Default CMD finished | `docker logs <name>` to see why |
 
-## DevOps Best Practices
+## Best Practices
+
 - **One process per container** — easier to scale and observe.
 - Use **minimal base images** (`alpine`, `distroless`).
 - Always set explicit **tags** (`nginx:alpine` not `nginx:latest`).
 - Always set **resource limits** in production.
 
 ## Production Considerations
+
 - Run as **non-root** inside the container.
 - Read-only root filesystem (`--read-only`).
 - Drop Linux capabilities (`--cap-drop=ALL --cap-add=NET_BIND_SERVICE`).
 - Use **rootless Docker** or `podman` for stronger isolation.
 
 ## Optional Advanced Enhancements
+
 - Use `nsenter` to enter a container's namespaces from the host.
 - Show `docker inspect` and pull out `.State.Pid`, then `ls /proc/<pid>/ns/`.
 - Compare container size vs VM size (10s of MB vs GB).
+
+## Instructor Notes
+
+- Show `ps -ef` on host vs `ps -ef` *inside* a container — different process trees.
+- Show `unshare` (Linux command) doing 80% of what Docker does, to demystify it.
+- Common confusion: containers ≠ VMs. They share the host kernel.
+
+## Real-World Relevance
+
+Containers are the unit of deployment everywhere — Kubernetes, ECS, Cloud Run,
+Lambda (under the hood). Understanding **what** Docker really gives you (Linux
+process isolation in a portable bundle) is foundational.
