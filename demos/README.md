@@ -44,6 +44,10 @@ Each folder under `demos/` is a self-contained demo. Open the folder's `DEMO.md`
 | 38 | [38-logging-and-monitoring/](38-logging-and-monitoring/) | Logging and Monitoring |
 | 39 | [39-supply-chain-security/](39-supply-chain-security/) | Supply Chain Security for a Global Consulting Firm |
 
+## Bonus
+
+- [custom-github-actions/](custom-github-actions/) — Author your own **composite**, **JavaScript**, and **Docker** GitHub Actions side-by-side.
+
 ## Shared
 
 - [`sample-app/`](sample-app/) — FastAPI sample app reused by demos that need a working service. Pre-copied into demos that use it.

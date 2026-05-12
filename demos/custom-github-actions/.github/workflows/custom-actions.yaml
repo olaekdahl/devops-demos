@@ -1,0 +1,48 @@
+name: Custom Actions Demo
+
+on:
+  push:
+    branches: [main, "feat/**"]
+  workflow_dispatch:
+    inputs:
+      who:
+        description: "Name to greet"
+        required: false
+        default: "Ada"
+
+jobs:
+  composite:
+    name: Composite action
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: greet
+        uses: ./actions/greet-composite
+        with:
+          who: ${{ inputs.who || 'Ada' }}
+      - name: Print greeting
+        run: echo "greeting=${{ steps.greet.outputs.greeting }}"
+
+  javascript:
+    name: JavaScript action
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: greet
+        uses: ./actions/greet-javascript
+        with:
+          who: ${{ inputs.who || 'Ada' }}
+      - name: Print greeting
+        run: echo "greeting=${{ steps.greet.outputs.greeting }}"
+
+  docker:
+    name: Docker action
+    runs-on: ubuntu-latest # Docker container actions are Linux-only
+    steps:
+      - uses: actions/checkout@v4
+      - id: greet
+        uses: ./actions/greet-docker
+        with:
+          who: ${{ inputs.who || 'Ada' }}
+      - name: Print greeting
+        run: echo "greeting=${{ steps.greet.outputs.greeting }}"

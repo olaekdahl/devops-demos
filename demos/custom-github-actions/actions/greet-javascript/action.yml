@@ -1,0 +1,13 @@
+name: "Greet (javascript)"
+description: "Emit a greeting using a Node.js JavaScript action."
+inputs:
+  who:
+    description: "Name to greet"
+    required: false
+    default: "world"
+outputs:
+  greeting:
+    description: "The full greeting string"
+runs:
+  using: node20
+  main: index.js
