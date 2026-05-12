@@ -48,6 +48,18 @@ Each folder under `demos/` is a self-contained demo. Open the folder's `DEMO.md`
 
 - [custom-github-actions/](custom-github-actions/) — Author your own **composite**, **JavaScript**, and **Docker** GitHub Actions side-by-side.
 
+## Deploying every demo workflow at once
+
+For convenience, every demo's `.github/workflows/*.yaml` can be aggregated into the repo-root `.github/workflows/` folder and run on demand from the **Actions** tab:
+
+```bash
+python3 tools/deploy_demo_workflows.py            # workflow_dispatch only (default)
+python3 tools/deploy_demo_workflows.py --mode=push  # also keep push triggers, scoped to each demo folder
+python3 tools/deploy_demo_workflows.py --clean    # remove previously generated files first
+```
+
+Each generated file is named `<demo-folder>__<workflow>.yaml`, prefixed with `[<demo-folder>]` in the Actions UI, and pinned to `defaults.run.working-directory: demos/<demo-folder>` so the original `app.py` / `requirements.txt` / `Dockerfile` paths still resolve.
+
 ## Shared
 
 - [`sample-app/`](sample-app/) — FastAPI sample app reused by demos that need a working service. Pre-copied into demos that use it.

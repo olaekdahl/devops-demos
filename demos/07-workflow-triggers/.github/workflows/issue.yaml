@@ -6,4 +6,5 @@ jobs:
   log:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "New issue: ${{ github.event.issue.title }} by ${{ github.event.issue.user.login }}"
+      - run: |
+          echo "New issue: ${{ github.event.issue.title }} by ${{ github.event.issue.user.login }}"
