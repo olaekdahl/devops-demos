@@ -42,3 +42,4 @@ defaults:
     working-directory: demos/10-matrix-builds
 'on':
   workflow_dispatch: {}
+  pull_request: null

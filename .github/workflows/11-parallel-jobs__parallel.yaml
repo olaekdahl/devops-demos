@@ -52,3 +52,4 @@ defaults:
     working-directory: demos/11-parallel-jobs
 'on':
   workflow_dispatch: {}
+  pull_request: null

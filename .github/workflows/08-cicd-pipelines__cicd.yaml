@@ -76,3 +76,4 @@ defaults:
     working-directory: demos/08-cicd-pipelines
 'on':
   workflow_dispatch: {}
+  pull_request: null

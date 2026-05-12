@@ -75,3 +75,4 @@ defaults:
     working-directory: demos/12-sequential-pipelines
 'on':
   workflow_dispatch: {}
+  pull_request: null

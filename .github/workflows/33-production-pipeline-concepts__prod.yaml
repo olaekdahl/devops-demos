@@ -112,3 +112,4 @@ defaults:
     working-directory: demos/33-production-pipeline-concepts
 'on':
   workflow_dispatch: {}
+  pull_request: null

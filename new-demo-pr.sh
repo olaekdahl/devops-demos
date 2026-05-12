@@ -2,14 +2,19 @@
 # new-demo-pr.sh — Create a throwaway pull request, fast.
 #
 # Usage:
-#   ./new-demo-pr.sh                 # auto title, single-file edit, opens PR
-#   ./new-demo-pr.sh "Custom title"  # custom PR title
-#   ./new-demo-pr.sh -m              # merge the PR after creating it
-#   ./new-demo-pr.sh -d              # draft PR
-#   ./new-demo-pr.sh -b feature/x    # use a specific branch name
+#   ./new-demo-pr.sh                       # auto title, touches default demo (07-workflow-triggers)
+#   ./new-demo-pr.sh "Custom title"        # custom PR title
+#   ./new-demo-pr.sh -D 09-unit-testing    # target a specific demo folder
+#   ./new-demo-pr.sh -D all                # touch every PR-triggered demo (fires them all)
+#   ./new-demo-pr.sh -m                    # merge the PR after creating it
+#   ./new-demo-pr.sh -d                    # draft PR
+#   ./new-demo-pr.sh -b feature/x          # use a specific branch name
 #
 # Run it as many times as you want — every call generates a new branch,
 # commit, and PR against `main` on the current `origin` remote.
+#
+# The PR modifies a file inside the target demo's folder so that any
+# pull_request-triggered workflow scoped to `demos/<demo>/**` actually fires.
 #
 # Requires: git, gh (authenticated: `gh auth login`).
 
@@ -21,13 +26,27 @@ MERGE=0
 DRAFT=0
 BRANCH=""
 TITLE=""
+DEMO="07-workflow-triggers"   # default target
+
+# Demos that have pull_request-triggered workflows (kept in sync with deploy script)
+PR_DEMOS=(
+  07-workflow-triggers
+  08-cicd-pipelines
+  09-unit-testing
+  10-matrix-builds
+  11-parallel-jobs
+  12-sequential-pipelines
+  33-production-pipeline-concepts
+  39-supply-chain-security
+)
 
 while (( $# )); do
   case "$1" in
     -m|--merge)  MERGE=1; shift ;;
     -d|--draft)  DRAFT=1; shift ;;
     -b|--branch) BRANCH="${2:?--branch needs a value}"; shift 2 ;;
-    -h|--help)   sed -n '2,15p' "$0"; exit 0 ;;
+    -D|--demo)   DEMO="${2:?--demo needs a value}"; shift 2 ;;
+    -h|--help)   sed -n '2,20p' "$0"; exit 0 ;;
     *)           TITLE="$1"; shift ;;
   esac
 done
@@ -57,16 +76,30 @@ git pull --ff-only origin "${DEFAULT_BRANCH}" --quiet
 echo "→ creating branch ${BRANCH}"
 git checkout -b "${BRANCH}" --quiet
 
-# Make a trivial, traceable change. Use a path that won't be caught by
-# common .gitignore patterns like `*.log`.
-LOG_DIR=".demo-prs"
-LOG="${LOG_DIR}/history.md"
-mkdir -p "${LOG_DIR}"
-[[ -f "${LOG}" ]] || echo "# Demo PR history" > "${LOG}"
-echo "- ${STAMP} \`${BRANCH}\` — ${TITLE}" >> "${LOG}"
+# Make a trivial, traceable change inside the target demo folder so that
+# pull_request-triggered workflows scoped to `demos/<demo>/**` fire.
+if [[ "${DEMO}" == "all" ]]; then
+  TARGETS=("${PR_DEMOS[@]}")
+else
+  if [[ ! -d "demos/${DEMO}" ]]; then
+    echo "demos/${DEMO} not found. Available PR-triggered demos:" >&2
+    printf '  %s\n' "${PR_DEMOS[@]}" >&2
+    git checkout "${DEFAULT_BRANCH}" --quiet
+    git branch -D "${BRANCH}" --quiet
+    exit 1
+  fi
+  TARGETS=("${DEMO}")
+fi
 
-# --force-add in case a project-level .gitignore happens to ignore the path.
-git add -f "${LOG}"
+for d in "${TARGETS[@]}"; do
+  LOG_DIR="demos/${d}/.demo-prs"
+  LOG="${LOG_DIR}/history.md"
+  mkdir -p "${LOG_DIR}"
+  [[ -f "${LOG}" ]] || echo "# Demo PR history for ${d}" > "${LOG}"
+  echo "- ${STAMP} \`${BRANCH}\` — ${TITLE}" >> "${LOG}"
+  git add -f "${LOG}"
+done
+
 if git diff --cached --quiet; then
   echo "nothing staged after edit — aborting" >&2
   git checkout "${DEFAULT_BRANCH}" --quiet

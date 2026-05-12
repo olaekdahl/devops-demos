@@ -13,3 +13,8 @@ defaults:
     working-directory: demos/07-workflow-triggers
 'on':
   workflow_dispatch: {}
+  pull_request:
+    types:
+    - opened
+    - synchronize
+    - reopened
