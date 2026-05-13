@@ -20,11 +20,9 @@ jobs:
     - name: Lint
       run: pip install flake8 && flake8 app.py --max-line-length=120
     - name: Unit tests
-      run: 'pip install -r requirements.txt pytest httpx
-
+      run: |
+        pip install -r requirements.txt pytest httpx
         PYTHONPATH=$(pwd) pytest -v tests/
-
-        '
     - name: SAST (semgrep)
       uses: returntocorp/semgrep-action@v1
       with:
@@ -73,11 +71,9 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Install conftest
-      run: 'curl -sSLo conftest.tar.gz https://github.com/open-policy-agent/conftest/releases/download/v0.55.0/conftest_0.55.0_Linux_x86_64.tar.gz
-
+      run: |
+        curl -sSLo conftest.tar.gz https://github.com/open-policy-agent/conftest/releases/download/v0.55.0/conftest_0.55.0_Linux_x86_64.tar.gz
         tar -xzf conftest.tar.gz && sudo mv conftest /usr/local/bin/
-
-        '
     - name: Validate manifests
       run: conftest test deployment.yaml -p policies/
   deploy-canary:
@@ -102,11 +98,9 @@ jobs:
     - promote
     runs-on: ubuntu-latest
     steps:
-    - run: 'echo "Auto-rollback to previous ReplicaSet"
-
+    - run: |
+        echo "Auto-rollback to previous ReplicaSet"
         # kubectl rollout undo deployment/devops-app
-
-        '
 defaults:
   run:
     working-directory: demos/33-production-pipeline-concepts

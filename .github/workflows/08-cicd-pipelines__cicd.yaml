@@ -53,24 +53,18 @@ jobs:
       with:
         name: app-wheel
         path: dist
-    - run: 'ls -lh dist/
-
+    - run: |
+        ls -lh dist/
         echo "Pretending to upload $(ls dist/) to S3 / Beanstalk / EKS..."
-
         # In a real pipeline this is `aws s3 cp` / `eb deploy` / `kubectl apply`.
-
-        '
   smoke:
     runs-on: ubuntu-latest
     needs: deploy
     steps:
-    - run: 'echo "curl https://devops-demo.example.com/health"
-
-        echo ''{"status":"OK"}''           # pretend response
-
+    - run: |
+        echo "curl https://devops-demo.example.com/health"
+        echo '{"status":"OK"}'           # pretend response
         echo "::notice::smoke test passed"
-
-        '
 defaults:
   run:
     working-directory: demos/08-cicd-pipelines

@@ -38,11 +38,9 @@ jobs:
         context: .
         file: ./Dockerfile
         push: true
-        tags: 'ghcr.io/${{ github.repository }}:${{ github.ref_name }}
-
+        tags: |
+          ghcr.io/${{ github.repository }}:${{ github.ref_name }}
           ghcr.io/${{ github.repository }}:latest
-
-          '
         provenance: mode=max
         sbom: true
     - name: Trivy image scan (block HIGH/CRITICAL)
@@ -67,8 +65,11 @@ jobs:
     - name: Attach SBOM as Cosign attestation
       env:
         IMAGE: ghcr.io/${{ github.repository }}@${{ steps.build.outputs.digest }}
-      run: "cosign attest --yes \\\n  --predicate sbom.spdx.json \\\n  --type spdxjson \\\n  \"$IMAGE\"\
-        \n"
+      run: |
+        cosign attest --yes \
+          --predicate sbom.spdx.json \
+          --type spdxjson \
+          "$IMAGE"
     - name: Generate GitHub-native build provenance attestation
       uses: actions/attest-build-provenance@bd77c077858b8d561b7a36cbe48ef4cc642ca39d
       with:

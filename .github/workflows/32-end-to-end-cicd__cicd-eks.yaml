@@ -32,13 +32,10 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - id: tag
-      run: 'TAG="${{ github.sha }}"
-
+      run: |
+        TAG="${{ github.sha }}"
         IMG="${{ secrets.ARTIFACTORY_URL }}/${{ env.REPO_PATH }}/${{ env.IMAGE_NAME }}:${TAG}"
-
         echo "image=$IMG" >> "$GITHUB_OUTPUT"
-
-        '
     - uses: docker/setup-buildx-action@v3
     - name: Login to JFrog Artifactory
       uses: docker/login-action@v3
@@ -69,26 +66,41 @@ jobs:
     - name: Update kubeconfig
       run: aws eks update-kubeconfig --name ${{ env.CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
     - name: Ensure pull secret exists
-      run: "kubectl create secret docker-registry jfrog-pull-secret \\\n  --docker-server=\"${{ secrets.ARTIFACTORY_URL\
-        \ }}\" \\\n  --docker-username=\"${{ secrets.ARTIFACTORY_USER }}\" \\\n  --docker-password=\"\
-        ${{ secrets.ARTIFACTORY_TOKEN }}\" \\\n  --docker-email=\"ci@example.com\" \\\n  --dry-run=client\
-        \ -o yaml | kubectl apply -f -\n"
+      run: |
+        kubectl create secret docker-registry jfrog-pull-secret \
+          --docker-server="${{ secrets.ARTIFACTORY_URL }}" \
+          --docker-username="${{ secrets.ARTIFACTORY_USER }}" \
+          --docker-password="${{ secrets.ARTIFACTORY_TOKEN }}" \
+          --docker-email="ci@example.com" \
+          --dry-run=client -o yaml | kubectl apply -f -
     - name: Render manifest with image tag
-      run: "sed \"s|__IMAGE__|${{ needs.build-and-push.outputs.image }}|g\" \\\n  deployment.yaml > rendered.yaml\n\
-        cat rendered.yaml\n"
+      run: |
+        sed "s|__IMAGE__|${{ needs.build-and-push.outputs.image }}|g" \
+          deployment.yaml > rendered.yaml
+        cat rendered.yaml
     - name: Apply
-      run: 'kubectl apply -f rendered.yaml
-
+      run: |
+        kubectl apply -f rendered.yaml
         kubectl rollout status deployment/devops-app --timeout=180s
-
-        '
     - name: Smoke test
-      run: "# wait up to 2 min for the LB DNS to populate\nfor i in $(seq 1 24); do\n  DNS=$(kubectl get\
-        \ svc devops-app-lb -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')\n  [ -n \"$DNS\"\
-        \ ] && break\n  sleep 5\ndone\necho \"App at: http://$DNS\"\nfor i in $(seq 1 30); do\n  if curl\
-        \ -sf \"http://$DNS/health\" > /dev/null; then\n    curl -s \"http://$DNS/health\" | tee health.json\n\
-        \    exit 0\n  fi\n  sleep 5\ndone\necho \"smoke test failed\"\nkubectl describe deploy devops-app\n\
-        exit 1\n"
+      run: |
+        # wait up to 2 min for the LB DNS to populate
+        for i in $(seq 1 24); do
+          DNS=$(kubectl get svc devops-app-lb -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+          [ -n "$DNS" ] && break
+          sleep 5
+        done
+        echo "App at: http://$DNS"
+        for i in $(seq 1 30); do
+          if curl -sf "http://$DNS/health" > /dev/null; then
+            curl -s "http://$DNS/health" | tee health.json
+            exit 0
+          fi
+          sleep 5
+        done
+        echo "smoke test failed"
+        kubectl describe deploy devops-app
+        exit 1
 defaults:
   run:
     working-directory: demos/32-end-to-end-cicd

@@ -10,17 +10,12 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
     - name: Print runner info
-      run: 'echo "Repo:   ${{ github.repository }}"
-
+      run: |
+        echo "Repo:   ${{ github.repository }}"
         echo "SHA:    ${{ github.sha }}"
-
         echo "Actor:  ${{ github.actor }}"
-
         echo "Event:  ${{ github.event_name }}"
-
         uname -a
-
-        '
     - name: Use Python action
       uses: actions/setup-python@v5
       with:
