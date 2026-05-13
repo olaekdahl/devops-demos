@@ -9,8 +9,5 @@ jobs:
     - run: 'echo "New issue: ${{ github.event.issue.title }} by ${{ github.event.issue.user.login }}"
 
         '
-defaults:
-  run:
-    working-directory: demos/07-workflow-triggers
 'on':
   workflow_dispatch: {}

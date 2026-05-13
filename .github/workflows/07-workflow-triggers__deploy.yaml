@@ -11,9 +11,6 @@ jobs:
         echo "to environment=${{ github.event.inputs.environment }}"
 
         '
-defaults:
-  run:
-    working-directory: demos/07-workflow-triggers
 'on':
   workflow_dispatch:
     inputs:

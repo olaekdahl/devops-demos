@@ -98,6 +98,19 @@ def rewrite_local_uses(node, demo_rel: str):
             rewrite_local_uses(item, demo_rel)
 
 
+def has_checkout(workflow: dict) -> bool:
+    """Return True if any job step uses actions/checkout."""
+    for job in (workflow.get("jobs") or {}).values():
+        if not isinstance(job, dict):
+            continue
+        for step in (job.get("steps") or []):
+            if isinstance(step, dict):
+                uses = step.get("uses", "")
+                if isinstance(uses, str) and uses.startswith("actions/checkout"):
+                    return True
+    return False
+
+
 def transform(workflow: dict, demo_rel: str, mode: str) -> dict:
     workflow = dict(workflow)  # shallow copy
 
@@ -105,12 +118,15 @@ def transform(workflow: dict, demo_rel: str, mode: str) -> dict:
     original_name = workflow.get("name", demo_rel)
     workflow["name"] = f"[{demo_rel}] {original_name}"
 
-    # 2. defaults.run.working-directory
-    defaults = dict(workflow.get("defaults") or {})
-    run_defaults = dict(defaults.get("run") or {})
-    run_defaults.setdefault("working-directory", f"demos/{demo_rel}")
-    defaults["run"] = run_defaults
-    workflow["defaults"] = defaults
+    # 2. Inject defaults.run.working-directory ONLY if the workflow actually
+    # checks out the repo. Without a checkout the runner workspace is empty,
+    # so cd'ing into demos/<demo> would fail.
+    if has_checkout(workflow):
+        defaults = dict(workflow.get("defaults") or {})
+        run_defaults = dict(defaults.get("run") or {})
+        run_defaults.setdefault("working-directory", f"demos/{demo_rel}")
+        defaults["run"] = run_defaults
+        workflow["defaults"] = defaults
 
     # 3. on: triggers
     workflow["on"] = normalize_on(workflow.get("on") or workflow.get(True), demo_rel, mode)

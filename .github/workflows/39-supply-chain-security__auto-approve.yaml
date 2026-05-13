@@ -11,9 +11,6 @@ jobs:
       pull-requests: write
     steps:
     - uses: hmarr/auto-approve-action@b40d6c9ed2fa10c9a2749eca7eb004418a705501
-defaults:
-  run:
-    working-directory: demos/39-supply-chain-security
 'on':
   workflow_dispatch: {}
   pull_request_target:
