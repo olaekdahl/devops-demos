@@ -64,27 +64,24 @@ def normalize_on(on_value, demo_rel: str, mode: str) -> dict:
     dispatch = on_map.get("workflow_dispatch")
     new_on: dict = {"workflow_dispatch": dispatch if dispatch is not None else {}}
 
-    # Always preserve PR triggers — opening a PR is an intentional demo action.
+    # Always preserve PR triggers, but scope them to this demo's folder so a
+    # PR touching demo X doesn't fire every other demo's PR workflow.
+    path_filter = [f"demos/{demo_rel}/**", f".github/workflows/{demo_rel}__*"]
     for trig in ("pull_request", "pull_request_target"):
         if trig in on_map:
-            new_on[trig] = on_map[trig]
+            cfg = on_map[trig] or {}
+            if not isinstance(cfg, dict):
+                cfg = {}
+            cfg["paths"] = path_filter
+            new_on[trig] = cfg
 
     if mode == "push":
-        path_filter = [f"demos/{demo_rel}/**", f".github/workflows/{demo_rel}__*"]
         if "push" in on_map:
             cfg = on_map["push"] or {}
             if not isinstance(cfg, dict):
                 cfg = {}
             cfg["paths"] = path_filter
             new_on["push"] = cfg
-        # Also scope PR triggers when in push mode
-        for trig in ("pull_request", "pull_request_target"):
-            if trig in new_on:
-                cfg = new_on[trig] or {}
-                if not isinstance(cfg, dict):
-                    cfg = {}
-                cfg["paths"] = path_filter
-                new_on[trig] = cfg
     return new_on
 
 

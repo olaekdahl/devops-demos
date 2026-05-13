@@ -25,4 +25,7 @@ defaults:
     working-directory: demos/09-unit-testing
 'on':
   workflow_dispatch: {}
-  pull_request: null
+  pull_request:
+    paths:
+    - demos/09-unit-testing/**
+    - .github/workflows/09-unit-testing__*

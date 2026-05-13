@@ -7,7 +7,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - run: echo "Validating PR
+    - run: 'echo "Validating PR #${{ github.event.pull_request.number }}"
+
+        '
 defaults:
   run:
     working-directory: demos/07-workflow-triggers
@@ -18,3 +20,6 @@ defaults:
     - opened
     - synchronize
     - reopened
+    paths:
+    - demos/07-workflow-triggers/**
+    - .github/workflows/07-workflow-triggers__*

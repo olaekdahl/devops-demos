@@ -45,4 +45,7 @@ defaults:
     working-directory: demos/39-supply-chain-security
 'on':
   workflow_dispatch: {}
-  pull_request: null
+  pull_request:
+    paths:
+    - demos/39-supply-chain-security/**
+    - .github/workflows/39-supply-chain-security__*

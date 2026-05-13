@@ -7,4 +7,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: echo "Validating PR #${{ github.event.pull_request.number }}"
+      - run: |
+          echo "Validating PR #${{ github.event.pull_request.number }}"

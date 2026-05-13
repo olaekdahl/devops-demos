@@ -24,5 +24,5 @@ defaults:
   workflow_dispatch: {}
   pull_request:
     paths:
-    - .github/workflows/**
-    - .github/actionlint.yaml
+    - demos/39-supply-chain-security/**
+    - .github/workflows/39-supply-chain-security__*

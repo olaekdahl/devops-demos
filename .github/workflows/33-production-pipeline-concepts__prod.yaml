@@ -112,4 +112,7 @@ defaults:
     working-directory: demos/33-production-pipeline-concepts
 'on':
   workflow_dispatch: {}
-  pull_request: null
+  pull_request:
+    paths:
+    - demos/33-production-pipeline-concepts/**
+    - .github/workflows/33-production-pipeline-concepts__*
