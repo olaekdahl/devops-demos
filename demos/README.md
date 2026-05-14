@@ -43,6 +43,7 @@ Each folder under `demos/` is a self-contained demo. Open the folder's `DEMO.md`
 | 37 | [37-observability-basics/](37-observability-basics/) | Observability Basics |
 | 38 | [38-logging-and-monitoring/](38-logging-and-monitoring/) | Logging and Monitoring |
 | 39 | [39-supply-chain-security/](39-supply-chain-security/) | Supply Chain Security for a Global Consulting Firm |
+| 40 | [40-trufflehog-secret-scanning/](40-trufflehog-secret-scanning/) | TruffleHog Secret Scanning |
 
 ## Bonus
 

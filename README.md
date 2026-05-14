@@ -8,7 +8,7 @@ Hands-on demos covering DevOps culture → Git/GitHub → GitHub Actions CI/CD �
 demos/
   README.md              # Index of all demos
   sample-app/            # Shared FastAPI app reused across demos
-  NN-topic/              # One self-contained folder per demo (39 of them)
+  NN-topic/              # One self-contained folder per demo (40 of them)
     DEMO.md              #   leads with "How to Run", then explanation
     <code files>         #   workflows / manifests / Dockerfiles / app code
 tools/
@@ -42,6 +42,6 @@ make install && make run     # http://localhost:8000
 | 19–28 | Docker, `kind`, `kubectl` |
 | 29–32 | Docker, `kubectl`, `eksctl`, AWS CLI v2, JFrog account |
 | 33–38 | All of the above + `helm` |
-| 39    | `cosign`, `syft`, GitHub repo with Actions enabled |
+| 39–40 | `cosign`, `syft`, GitHub repo with Actions enabled |
 
 See [demos/README.md](demos/README.md) for the full demo index.
