@@ -1,0 +1,12 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: ipb }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: ipb } }
+  template:
+    metadata: { labels: { app: ipb } }
+    spec:
+      containers:
+        - name: c
+          image: nginx:does-not-exist     # bad tag

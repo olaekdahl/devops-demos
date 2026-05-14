@@ -1,0 +1,16 @@
+name: Unit tests
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12', cache: 'pip' }
+      - run: pip install -r requirements.txt pytest httpx pytest-cov
+      - name: Run tests with coverage
+        run: |
+          PYTHONPATH=$(pwd) pytest -v --cov=app --cov-report=term-missing tests/
+      - name: Fail if coverage < 80%
+        run: |
+          PYTHONPATH=$(pwd) pytest --cov=app --cov-fail-under=80 tests/

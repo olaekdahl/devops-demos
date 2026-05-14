@@ -1,0 +1,10 @@
+name: New-issue logger
+on:
+  issues:
+    types: [opened]
+jobs:
+  log:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "New issue: ${{ github.event.issue.title }} by ${{ github.event.issue.user.login }}"

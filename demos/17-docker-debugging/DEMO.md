@@ -1,0 +1,133 @@
+# Demo 17 — Docker Debugging
+
+## How to Run
+
+All files needed by this demo are already in this folder. Run from inside it:
+
+```bash
+docker build -f Dockerfile.broken1 -t bad1 .
+docker run -d --name bad1 -p 8000:8000 bad1
+docker ps -a                           # status: Exited (1)
+docker logs bad1
+# ► ERROR: Error loading ASGI app. Could not import module "apps".
+docker rm bad1
+```
+
+## Prerequisites
+
+- Docker, sample app.
+
+## Learning Objectives
+
+- Use `docker logs`, `docker exec`, `docker inspect`, `docker top` to debug.
+- Diagnose CrashLoopBackOff-style failures (container exits immediately).
+- Use `docker run --rm -it ... sh` for ad-hoc debugging.
+
+## Concepts Covered
+
+- Stdout/stderr → `docker logs`
+- Live shell into a container
+- Inspecting container metadata (state, mounts, networks)
+- Common failures: bad CMD, missing file, port conflict, crash loop
+
+## Architecture
+
+```
+  Container fails ──► docker ps -a   (find ID)
+                  ├─► docker logs    (why did it die?)
+                  ├─► docker inspect (full state)
+                  └─► docker run -it <image> sh   (poke around)
+```
+
+## Walkthrough
+
+Fix: change CMD to `app:app`. Rebuild, run, success.
+
+### Failure 2: port mismatch
+```bash
+docker build -f Dockerfile.broken2 -t bad2 .
+docker run -d --name bad2 -p 3000:3000 bad2
+docker logs bad2                        # uvicorn says "listening on 8000"
+curl localhost:3000/health              # CONNECTION REFUSED
+# Diagnosis: app inside listens on 8000, but host port 3000 maps to container 3000
+docker rm -f bad2
+docker run -d --name bad2 -p 3000:8000 bad2     # remap host->container
+curl localhost:3000/health              # works
+```
+
+### Failure 3: missing build file
+```bash
+docker build -f Dockerfile.broken3 -t bad3 .
+# ► ERROR: requirements.txt: No such file or directory
+# Fix: ensure COPY requirements.txt . happens BEFORE the RUN pip install
+```
+
+### General debugging toolbox
+```bash
+# Live tail of logs
+docker logs -f --tail=50 <container>
+
+# Shell into a running container
+docker exec -it <container> /bin/sh
+ls -l /app
+ps -ef
+env
+
+# Inspect everything
+docker inspect <container> | less
+docker top <container>
+
+# Network view
+docker port <container>
+docker inspect -f '{{json .NetworkSettings}}' <container> | jq .
+
+# Run an "ephemeral debug pod" with the same image
+docker run --rm -it --entrypoint /bin/sh devops-app:1.0.0
+```
+
+## Expected Output
+
+```
+$ docker logs bad1
+INFO:     Started server process [1]
+ERROR:    Error loading ASGI app. Could not import module "apps".
+
+$ docker exec -it api /bin/sh
+/ # ls /app
+app.py  requirements.txt  ...
+```
+
+## Troubleshooting
+
+| Symptom | Cause | Fix |
+|---|---|---|
+| Exits immediately | Bad CMD or missing dep | `docker logs` |
+| Container running but unreachable | Wrong port mapping | `docker port` then re-`-p` |
+| `OCI runtime exec failed: exec: "/bin/sh"` | Distroless image (no shell) | Use a debug sidecar or `docker cp` files out |
+| Logs empty | App writes to a file, not stdout | Make app log to stdout (12-factor) |
+| Out of disk | Old images & layers | `docker system prune -af --volumes` |
+
+## Best Practices
+
+- **Log to stdout/stderr**, never to a file inside the container.
+- Add a `HEALTHCHECK` to your Dockerfile for early failure detection.
+- Tag images per build (`devops-app:git-sha`) so `docker logs` correlates with code.
+- Keep a tiny **debug image** with `curl/dig/ps` for ephemeral troubleshooting.
+
+## Production Considerations
+
+- Use **Kubernetes ephemeral debug containers** (`kubectl debug`) — same model.
+- Centralize logs (CloudWatch, Loki, Splunk).
+- Use **OpenTelemetry** for traces; logs alone aren't enough.
+
+## Optional Advanced Enhancements
+
+- Add a `HEALTHCHECK` instruction; show `docker ps` STATUS column include health.
+- Use `docker events` in a second terminal to watch container lifecycle live.
+- `docker run --init` to reap zombie processes correctly.
+
+
+## Real-World Relevance
+
+Every container engineer spends 30% of their time debugging containers.
+Knowing the four commands above instinctively is a force multiplier.

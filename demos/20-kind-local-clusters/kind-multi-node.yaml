@@ -1,0 +1,14 @@
+# Multi-node config: one control plane + two workers.
+# Useful for showing scheduling, taints/tolerations, PodAntiAffinity.
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: devops
+nodes:
+  - role: control-plane
+    # Forward host port 8080 to ingress later in Demo 23.
+    extraPortMappings:
+      - containerPort: 80
+        hostPort: 8080
+        protocol: TCP
+  - role: worker
+  - role: worker

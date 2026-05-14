@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: devops-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx           # which controller handles this
+  rules:
+    - host: devops.local            # add to /etc/hosts: 127.0.0.1 devops.local
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: devops-app-svc       # from Demo 22
+                port: { number: 80 }
+          - path: /web
+            pathType: Prefix
+            backend:
+              service:
+                name: web-svc
+                port: { number: 80 }

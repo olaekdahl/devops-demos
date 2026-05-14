@@ -1,0 +1,12 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "devops-demo-cicd"
+version = "0.1.0"
+description = "Demo app for 08-cicd-pipelines"
+requires-python = ">=3.12"
+
+[tool.setuptools]
+py-modules = ["app"]

@@ -1,0 +1,15 @@
+name: "Greet (docker)"
+description: "Emit a greeting using a Docker container action."
+inputs:
+  who:
+    description: "Name to greet"
+    required: false
+    default: "world"
+outputs:
+  greeting:
+    description: "The full greeting string"
+runs:
+  using: docker
+  image: Dockerfile
+  args:
+    - ${{ inputs.who }}

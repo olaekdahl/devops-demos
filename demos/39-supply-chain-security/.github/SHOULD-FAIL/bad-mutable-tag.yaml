@@ -1,0 +1,11 @@
+# !!! INTENTIONALLY VULNERABLE — uses mutable @v4 tag instead of a SHA. !!!
+# An attacker who compromises actions/checkout can force-push the v4 tag.
+name: BAD - mutable tag
+on: [pull_request]
+permissions: { contents: read }
+jobs:
+  vuln:
+    runs-on: ubuntu-latest        # ❌ also uses floating runner tag
+    steps:
+      - uses: actions/checkout@v4 # ❌ unpinned
+      - run: echo "untrusted action ran"

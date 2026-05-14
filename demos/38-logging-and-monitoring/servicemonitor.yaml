@@ -1,0 +1,16 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: devops-app
+  namespace: monitoring
+  labels:
+    release: kps                    # required selector for kube-prometheus-stack
+spec:
+  namespaceSelector:
+    matchNames: [default]
+  selector:
+    matchLabels: { app: devops-app }
+  endpoints:
+    - port: http                    # service port name
+      path: /metrics
+      interval: 15s

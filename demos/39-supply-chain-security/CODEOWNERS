@@ -1,0 +1,12 @@
+# Anything that touches CI requires sign-off from the security team.
+# This is the single most leveraged control in the entire pack.
+/.github/                          @firm/sec-team @firm/ci-platform
+/.github/workflows/release.yaml    @firm/sec-team @firm/release-managers
+/.github/workflows/auto-approve.yaml @firm/sec-team
+/.github/renovate.json5            @firm/sec-team
+/CODEOWNERS                        @firm/sec-team
+/policy/                           @firm/sec-team
+/Dockerfile                        @firm/sec-team @firm/app-team
+
+# Source code: domain teams own their slices.
+/app/                              @firm/app-team

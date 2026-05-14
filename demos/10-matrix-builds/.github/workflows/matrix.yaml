@@ -1,0 +1,36 @@
+name: Matrix tests
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false           # let all cells finish so we see ALL failures
+      max-parallel: 4            # cap concurrent jobs
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python-version: ['3.11', '3.12', '3.13']
+        # Skip a known-broken combo
+        exclude:
+          - os: macos-latest
+            python-version: '3.11'
+        # Add a special cell with extra env
+        include:
+          - os: ubuntu-latest
+            python-version: '3.12'
+            extra: 'with-coverage'
+
+    name: ${{ matrix.os }} / py${{ matrix.python-version }}${{ matrix.extra && format(' / {0}', matrix.extra) || '' }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+      - run: pip install -r requirements.txt pytest httpx pytest-cov
+      - name: Run tests
+        run: PYTHONPATH=$(pwd) pytest -v tests/
+      - name: Coverage report (special cell only)
+        if: matrix.extra == 'with-coverage'
+        run: PYTHONPATH=$(pwd) pytest --cov=app --cov-report=term-missing tests/

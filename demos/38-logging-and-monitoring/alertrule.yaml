@@ -1,0 +1,26 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: devops-app-alerts
+  namespace: monitoring
+  labels: { release: kps }
+spec:
+  groups:
+    - name: devops-app
+      rules:
+        - alert: HighErrorRate
+          expr: |
+            sum(rate(http_requests_total{job="devops-app",status=~"5.."}[2m]))
+            / sum(rate(http_requests_total{job="devops-app"}[2m])) > 0.05
+          for: 2m
+          labels: { severity: page }
+          annotations:
+            summary: ">5% 5xx errors on devops-app"
+            runbook: "https://wiki/runbooks/devops-app-5xx"
+
+        - alert: PodCrashLooping
+          expr: increase(kube_pod_container_status_restarts_total{namespace="default"}[5m]) > 3
+          for: 5m
+          labels: { severity: page }
+          annotations:
+            summary: "{{ $labels.pod }} restarting frequently"

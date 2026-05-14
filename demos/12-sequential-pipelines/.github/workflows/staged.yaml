@@ -1,0 +1,74 @@
+name: Staged pipeline
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+
+  # Stage 1 — parallel quality gates
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12', cache: 'pip' }
+      - run: pip install flake8 && flake8 app.py --max-line-length=120
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install pip-audit && pip-audit -r requirements.txt || true
+
+  # Stage 2 — needs both quality gates
+  test:
+    needs: [lint, security]
+    runs-on: ubuntu-latest
+    outputs:
+      tests-passed: ${{ steps.set.outputs.passed }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12', cache: 'pip' }
+      - run: pip install -r requirements.txt pytest httpx
+      - run: PYTHONPATH=$(pwd) pytest -v tests/
+      - id: set
+        run: echo "passed=true" >> "$GITHUB_OUTPUT"
+
+  # Stage 3 — build runs only after tests pass
+  build:
+    needs: test
+    if: needs.test.outputs.tests-passed == 'true'
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.ver.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: ver
+        run: echo "version=1.0.${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install build && python -m build --wheel
+      - uses: actions/upload-artifact@v4
+        with: { name: app-wheel, path: dist/*.whl }
+
+  deploy-dev:
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: dev          # GitHub Environment (no protection rules)
+    steps:
+      - run: echo "Deploying ${{ needs.build.outputs.version }} to DEV"
+
+  deploy-prod:
+    needs: deploy-dev
+    runs-on: ubuntu-latest
+    environment: prod         # configure required reviewers in repo settings
+    steps:
+      - run: echo "Deploying ${{ needs.build.outputs.version }} to PROD"

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata: { name: pending }
+spec:
+  nodeSelector:
+    disktype: nvme-extreme       # no node has this label
+  containers:
+    - name: c
+      image: busybox
+      command: ["sleep", "9999"]

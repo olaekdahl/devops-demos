@@ -1,0 +1,20 @@
+name: "Greet (composite)"
+description: "Emit a greeting using a composite action (bundled shell steps)."
+inputs:
+  who:
+    description: "Name to greet"
+    required: false
+    default: "world"
+outputs:
+  greeting:
+    description: "The full greeting string"
+    value: ${{ steps.build.outputs.greeting }}
+runs:
+  using: composite
+  steps:
+    - id: build
+      shell: bash
+      run: |
+        msg="Hello, ${{ inputs.who }}! (from composite)"
+        echo "$msg"
+        echo "greeting=$msg" >> "$GITHUB_OUTPUT"
