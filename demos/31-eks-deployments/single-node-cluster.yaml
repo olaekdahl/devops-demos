@@ -9,6 +9,6 @@ nodeGroups:
     desiredCapacity: 1
     minSize: 1
     maxSize: 1
-    amiFamily: AmazonLinux2
+    amiFamily: AmazonLinux2023           # AL2 is unsupported on K8s 1.33+
 iam:
   withOIDC: true                        # required for IRSA / LBC
