@@ -44,10 +44,8 @@ Each folder under `demos/` is a self-contained demo. Open the folder's `DEMO.md`
 | 38 | [38-logging-and-monitoring/](38-logging-and-monitoring/) | Logging and Monitoring |
 | 39 | [39-supply-chain-security/](39-supply-chain-security/) | Supply Chain Security for a Global Consulting Firm |
 | 40 | [40-trufflehog-secret-scanning/](40-trufflehog-secret-scanning/) | TruffleHog Secret Scanning |
-
-## Bonus
-
-- [custom-github-actions/](custom-github-actions/) — Author your own **composite**, **JavaScript**, and **Docker** GitHub Actions side-by-side.
+| 41 | [41-aws-secrets-manager/](41-aws-secrets-manager/) | AWS Secrets Manager for JFrog Pull Secrets |
+| 42 | [42-custom-github-actions/](42-custom-github-actions/) | Custom GitHub Actions (Composite, JavaScript, Docker) |
 
 ## Deploying every demo workflow at once
 

@@ -6,8 +6,8 @@ All files needed by this demo are in this folder. From the repo root:
 
 ```bash
 # 1) Copy this demo's contents into your devops-<initials> repo working tree
-cp -r demos/custom-github-actions/.github   /path/to/devops-<initials>/
-cp -r demos/custom-github-actions/actions   /path/to/devops-<initials>/
+cp -r demos/42-custom-github-actions/.github   /path/to/devops-<initials>/
+cp -r demos/42-custom-github-actions/actions   /path/to/devops-<initials>/
 
 cd /path/to/devops-<initials>
 git checkout -b feat/custom-actions
