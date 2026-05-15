@@ -1,20 +1,30 @@
 apiVersion: apps/v1
 kind: Deployment
-metadata: { name: backend }
+metadata:
+  name: backend
 spec:
   replicas: 2
-  selector: { matchLabels: { app: backend } }
+  selector:
+    matchLabels:
+      app: backend
   template:
-    metadata: { labels: { app: BACKEND } }   # case mismatch! breaks selector
+    metadata:
+      labels:
+        app: BACKEND   # case mismatch! breaks selector
     spec:
       containers:
         - name: c
           image: nginx:alpine
-          ports: [{ containerPort: 80 }]
+          ports:
+            - containerPort: 80
 ---
 apiVersion: v1
 kind: Service
-metadata: { name: backend-svc }
+metadata:
+  name: backend-svc
 spec:
-  selector: { app: backend }                  # never matches BACKEND
-  ports: [{ port: 80, targetPort: 80 }]
+  selector:
+    app: backend                  # never matches BACKEND
+  ports:
+    - port: 80
+      targetPort: 80

@@ -15,10 +15,12 @@ spec:
             backend:
               service:
                 name: devops-app-svc       # from Demo 22
-                port: { number: 80 }
+                port:
+                  number: 80
           - path: /web
             pathType: Prefix
             backend:
               service:
                 name: web-svc
-                port: { number: 80 }
+                port:
+                  number: 80

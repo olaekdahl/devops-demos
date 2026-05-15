@@ -1,9 +1,15 @@
 apiVersion: v1
 kind: Pod
-metadata: { name: loadgen }
+metadata:
+  name: loadgen
 spec:
   restartPolicy: Never
   containers:
     - name: hey
       image: williamyeh/hey:latest
-      args: ["-z", "120s", "-c", "50", "http://devops-app-svc/health"]
+      args:
+        - "-z"
+        - "120s"
+        - "-c"
+        - "50"
+        - "http://devops-app-svc/health"

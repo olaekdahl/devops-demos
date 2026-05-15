@@ -4,7 +4,8 @@ metadata:
   name: devops-app-lb
 spec:
   type: LoadBalancer
-  selector: { app: devops-app }
+  selector:
+    app: devops-app
   ports:
     - port: 80
       targetPort: 8000

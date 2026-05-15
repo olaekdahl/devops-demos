@@ -1,6 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
-metadata: { name: devops-app-config }
+metadata:
+  name: devops-app-config
 data:
   # Simple key/values — used as env vars
   APP_NAME: "DevOps Demo App"

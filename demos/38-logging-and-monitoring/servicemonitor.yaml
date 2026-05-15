@@ -7,9 +7,11 @@ metadata:
     release: kps                    # required selector for kube-prometheus-stack
 spec:
   namespaceSelector:
-    matchNames: [default]
+    matchNames:
+      - default
   selector:
-    matchLabels: { app: devops-app }
+    matchLabels:
+      app: devops-app
   endpoints:
     - port: http                    # service port name
       path: /metrics

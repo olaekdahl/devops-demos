@@ -4,7 +4,8 @@ metadata:
   name: devops-app-np
 spec:
   type: NodePort
-  selector: { app: devops-app }
+  selector:
+    app: devops-app
   ports:
     - port: 80
       targetPort: 8000

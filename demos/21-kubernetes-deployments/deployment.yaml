@@ -2,7 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: devops-app
-  labels: { app: devops-app }
+  labels:
+    app: devops-app
 spec:
   replicas: 3
   revisionHistoryLimit: 5            # keep last 5 ReplicaSets for rollback
@@ -12,10 +13,12 @@ spec:
       maxSurge: 1                    # at most 1 EXTRA pod during update
       maxUnavailable: 0              # never drop below desired count
   selector:
-    matchLabels: { app: devops-app }
+    matchLabels:
+      app: devops-app
   template:
     metadata:
-      labels: { app: devops-app }
+      labels:
+        app: devops-app
     spec:
       containers:
         - name: app
@@ -24,13 +27,21 @@ spec:
           ports:
             - containerPort: 8000
           resources:
-            requests: { cpu: "50m",  memory: "64Mi" }
-            limits:   { cpu: "250m", memory: "128Mi" }
+            requests:
+              cpu: "50m"
+              memory: "64Mi"
+            limits:
+              cpu: "250m"
+              memory: "128Mi"
           readinessProbe:           # only receive traffic when /health is OK
-            httpGet: { path: /health, port: 8000 }
+            httpGet:
+              path: /health
+              port: 8000
             initialDelaySeconds: 2
             periodSeconds: 5
           livenessProbe:            # restart container if it stops being healthy
-            httpGet: { path: /health, port: 8000 }
+            httpGet:
+              path: /health
+              port: 8000
             initialDelaySeconds: 10
             periodSeconds: 10

@@ -1,11 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
-metadata: { name: devops-app }
+metadata:
+  name: devops-app
 spec:
   replicas: 1
-  selector: { matchLabels: { app: devops-app } }
+  selector:
+    matchLabels:
+      app: devops-app
   template:
-    metadata: { labels: { app: devops-app } }
+    metadata:
+      labels:
+        app: devops-app
     spec:
       # Pull from private Artifactory (Demo 30)
       imagePullSecrets:
@@ -14,7 +19,8 @@ spec:
         - name: app
           image: devops-app:1.0.0
           imagePullPolicy: IfNotPresent
-          ports: [{ containerPort: 8000 }]
+          ports:
+            - containerPort: 8000
           env:
             - name: SECRET_KEY
               valueFrom:

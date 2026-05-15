@@ -1,11 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
-metadata: { name: ipb }
+metadata:
+  name: ipb
 spec:
   replicas: 1
-  selector: { matchLabels: { app: ipb } }
+  selector:
+    matchLabels:
+      app: ipb
   template:
-    metadata: { labels: { app: ipb } }
+    metadata:
+      labels:
+        app: ipb
     spec:
       containers:
         - name: c

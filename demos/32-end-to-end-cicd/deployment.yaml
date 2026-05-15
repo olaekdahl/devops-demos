@@ -1,11 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
-metadata: { name: devops-app }
+metadata:
+  name: devops-app
 spec:
   replicas: 2
-  selector: { matchLabels: { app: devops-app } }
+  selector:
+    matchLabels:
+      app: devops-app
   template:
-    metadata: { labels: { app: devops-app } }
+    metadata:
+      labels:
+        app: devops-app
     spec:
       imagePullSecrets:
         - name: jfrog-pull-secret
@@ -13,11 +18,16 @@ spec:
         - name: app
           image: __IMAGE__              # replaced at deploy time with full ref
           imagePullPolicy: Always
-          ports: [{ containerPort: 8000 }]
+          ports:
+            - containerPort: 8000
           readinessProbe:
-            httpGet: { path: /health, port: 8000 }
+            httpGet:
+              path: /health
+              port: 8000
           livenessProbe:
-            httpGet: { path: /health, port: 8000 }
+            httpGet:
+              path: /health
+              port: 8000
             initialDelaySeconds: 10
 ---
 apiVersion: v1
@@ -30,5 +40,8 @@ metadata:
     service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
 spec:
   type: LoadBalancer
-  selector: { app: devops-app }
-  ports: [{ port: 80, targetPort: 8000 }]
+  selector:
+    app: devops-app
+  ports:
+    - port: 80
+      targetPort: 8000

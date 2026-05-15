@@ -1,6 +1,7 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
-metadata: { name: devops-app-hpa }
+metadata:
+  name: devops-app-hpa
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -18,6 +19,9 @@ spec:
   behavior:
     scaleUp:
       stabilizationWindowSeconds: 0       # react immediately
-      policies: [{ type: Percent, value: 100, periodSeconds: 15 }]
+      policies:
+        - type: Percent
+          value: 100
+          periodSeconds: 15
     scaleDown:
       stabilizationWindowSeconds: 60      # wait 1 min before scaling back
