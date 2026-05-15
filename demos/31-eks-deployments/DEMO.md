@@ -17,9 +17,9 @@ kubectl get nodes
 # 4. Install LBC (provides real LoadBalancer Services / ALB Ingress)
 bash install-aws-lb-controller.sh
 
-# 5. Pull secret for Artifactory (from Demo 30)
-ARTIFACTORY_URL=... ARTIFACTORY_USER=... ARTIFACTORY_TOKEN=... \
-  bash ../30-jfrog-artifactory/pull-secret.sh
+# 5. Update secret.yaml with your docker-registry values, then apply it
+# Replace <artifactory-url>, <your-username>, <your-api-key-or-password>, and <your-email>.
+kubectl apply -f secret.yaml
 
 # 6. Deploy app + Service
 kubectl apply -f deployment.yaml -f service-lb.yaml
@@ -40,6 +40,7 @@ eksctl delete cluster -f single-node-cluster.yaml
 
 - AWS CLI configured (`aws configure`) with credentials for your AWS account.
 - `eksctl` ≥ 0.180, `kubectl` ≥ 1.30, `helm` (for LBC install).
+- Update [secret.yaml](/home/ola/ciracon/devops-demos/demos/31-eks-deployments/secret.yaml) with valid docker-registry values before applying it.
 
 ## Learning Objectives
 
@@ -96,6 +97,7 @@ $ curl http://k8s-default-devopsap-...elb.us-west-2.amazonaws.com/health
 | Service stuck `<pending>` | LBC not installed | Run install script |
 | LB DNS resolves but 504 | Targets not yet registered | Wait ~30s; check target group health |
 | Nodes not joining | IAM role missing perms | `eksctl utils nodegroup-health-info` |
+| `ImagePullBackOff` | Secret placeholders not replaced or creds invalid | Update and re-apply [secret.yaml](/home/ola/ciracon/devops-demos/demos/31-eks-deployments/secret.yaml) |
 
 ## Best Practices
 

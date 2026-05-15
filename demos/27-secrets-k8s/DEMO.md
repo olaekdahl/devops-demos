@@ -7,8 +7,9 @@ All files needed by this demo are already in this folder. Run from inside it:
 ```bash
 kubectl apply -f secret-opaque.yaml
 
-# (For Capstone) create an image-pull secret too
-ARTIFACTORY_URL=... USER=... TOKEN=... bash pull-secret.sh
+# (For Capstone) update secret.yaml with your docker-registry values, then apply it
+# Replace <artifactory-url>, <your-username>, <your-api-key-or-password>, and <your-email>.
+kubectl apply -f secret.yaml
 
 kubectl apply -f deployment.yaml
 kubectl rollout status deployment/devops-app
@@ -29,6 +30,7 @@ echo c3VwZXItc2VjcmV0LWRvLW5vdC1wcmludA== | base64 -d
 ## Prerequisites
 
 - Demo 21.
+- Update [demos/27-secrets-k8s/secret.yaml](/home/ola/ciracon/devops-demos/demos/27-secrets-k8s/secret.yaml) with valid docker-registry values before applying it.
 
 ## Learning Objectives
 
@@ -74,7 +76,7 @@ super-secret-do-not-print           ◄ ANYONE WITH RBAC CAN READ THIS
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| `ImagePullBackOff` from private registry | Wrong/missing `imagePullSecrets` | Recreate via `pull-secret.sh` and reference in pod spec |
+| `ImagePullBackOff` from private registry | Wrong/missing `imagePullSecrets` | Update and re-apply [demos/27-secrets-k8s/secret.yaml](/home/ola/ciracon/devops-demos/demos/27-secrets-k8s/secret.yaml) and reference it in the pod spec |
 | Env var empty | Wrong `key` in `secretKeyRef` | Match key exactly (case-sensitive) |
 | Secret keys not updated in pod | Same as ConfigMap — env doesn't refresh | Roll the deployment |
 | `forbidden: User cannot get resource "secrets"` | RBAC denies | Grant via Role/RoleBinding |
